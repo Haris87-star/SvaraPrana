@@ -1,0 +1,35 @@
+{
+  "name": "svaraprana",
+  "version": "2.0.0",
+  "description": "SvaraPrana (स्वरप्राण) - Zero-Hardware Ambient Acoustic Care Bridge & Non-Invasive Healthcare Coordination for 140M+ Indian Elders. SaarthiX Hackathon 2026.",
+  "main": "main.js",
+  "scripts": {
+    "start": "python server.py",
+    "dev": "python server.py",
+    "test": "python verify_all.py",
+    "pdf": "python generate_proposal_pdf.py",
+    "electron": "electron main.js",
+    "electron:dir": "electron electron/electron-main.cjs",
+    "mobile:sync": "cap sync",
+    "build:android": "cap open android",
+    "build:ios": "cap open ios",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "keywords": [
+    "svaraprana",
+    "eldercare",
+    "telephony-dsp",
+    "acoustic-biomarkers",
+    "dpdp-act",
+    "fastapi",
+    "cross-platform",
+    "pwa",
+    "electron",
+    "capacitor",
+    "flutter"
+  ],
+  "author": "Harish Hari (Principal Software Engineer & Technical Designer)",
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,139 @@
+/**
+ * SvaraPrana - Responsive Layout Breakpoints
+ * Seamless adaptive experience for Android, iOS, Windows, macOS, and Tablets
+ */
+
+/* Medium Screens & Tablets (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .site-header {
+    padding: 0.75rem 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .nav-portal-tabs {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 0.25rem;
+  }
+
+  .portal-tab-btn {
+    font-size: 0.78rem;
+    padding: 0.45rem 0.9rem;
+  }
+
+  .main-wrapper {
+    padding: 1.25rem;
+  }
+
+  .metric-quad-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .caregiver-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .biomarker-cards-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dsp-lab-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .companion-layout {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .dialogue-stream-card {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .safety-tiers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Small Screens & Mobile Phones (max-width: 640px) */
+@media (max-width: 640px) {
+  .site-header {
+    padding: 0.5rem 0.85rem;
+  }
+
+  .brand-tagline {
+    display: none;
+  }
+
+  .header-actions .system-status-pill span:not(.pulse-dot) {
+    display: none;
+  }
+
+  .hero-section {
+    padding: 1.5rem 0.5rem 2.5rem;
+  }
+
+  .hero-title {
+    font-size: 2.1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .metric-quad-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quad-stat-val {
+    font-size: 1.5rem;
+  }
+
+  .vitals-summary-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.25rem;
+  }
+
+  .elder-location {
+    justify-content: center;
+  }
+
+  .elder-vitals-pills {
+    justify-content: center;
+  }
+
+  .biomarker-cards-row {
+    grid-template-columns: 1fr;
+  }
+
+  .blister-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .safety-tiers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nokia-phone-chassis {
+    width: 290px;
+    padding: 1rem;
+  }
+
+  .platform-download-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Standalone PWA / Native Mobile Tweaks */
+@media all and (display-mode: standalone) {
+  .site-header {
+    padding-top: max(0.75rem, env(safe-area-inset-top));
+  }
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
