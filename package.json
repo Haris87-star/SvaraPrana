@@ -4,6 +4,7 @@
   "description": "SvaraPrana (स्वरप्राण) - Zero-Hardware Ambient Acoustic Care Bridge & Non-Invasive Healthcare Coordination for 140M+ Indian Elders. SaarthiX Hackathon 2026.",
   "main": "main.js",
   "scripts": {
+    "build": "node -e \"const fs=require('fs'); if(!fs.existsSync('public')) fs.mkdirSync('public'); fs.copyFileSync('index.html','public/index.html'); if(fs.existsSync('assets')) fs.cpSync('assets','public/assets',{recursive:true}); if(fs.existsSync('manifest.json')) fs.copyFileSync('manifest.json','public/manifest.json'); if(fs.existsSync('favicon.png')) fs.copyFileSync('favicon.png','public/favicon.png'); console.log('Build complete: synchronized index.html and assets to public/');\"",
     "start": "python server.py",
     "dev": "python server.py",
     "test": "python verify_all.py",

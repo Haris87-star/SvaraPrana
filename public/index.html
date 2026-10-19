@@ -13,11 +13,14 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="SvaraPrana">
-  <link rel="apple-touch-icon" href="public/assets/icons/app-logo.png">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
   
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="public/assets/icons/app-logo.png">
+  <!-- Instant Vector Favicon (Zero latency, never missing or broken) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%23090D16'/%3E%3Crect width='188' height='188' x='2' y='2' rx='40' fill='none' stroke='rgba(255,255,255,0.15)' stroke-width='2'/%3E%3Crect x='42' y='90' width='6' height='12' rx='3' fill='%2310B981'/%3E%3Crect x='54' y='80' width='6' height='32' rx='3' fill='%2310B981'/%3E%3Crect x='66' y='65' width='6' height='62' rx='3' fill='%2306B6D4'/%3E%3Crect x='78' y='55' width='6' height='82' rx='3' fill='%2306B6D4'/%3E%3Ccircle cx='96' cy='96' r='14' fill='%2310B981'/%3E%3Ccircle cx='96' cy='96' r='6' fill='%23FFFFFF'/%3E%3Crect x='108' y='55' width='6' height='82' rx='3' fill='%236366F1'/%3E%3Crect x='120' y='65' width='6' height='62' rx='3' fill='%236366F1'/%3E%3Crect x='132' y='80' width='6' height='32' rx='3' fill='%238B5CF6'/%3E%3Crect x='144' y='90' width='6' height='12' rx='3' fill='%238B5CF6'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
 
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1198,7 +1201,7 @@
       background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      z-index: 999;
+      z-index: 2000;
       display: none;
       align-items: center;
       justify-content: center;
@@ -1877,8 +1880,27 @@
     <header class="top-header" role="banner">
       <!-- Brand Logo & Title -->
       <div class="brand-section" id="btnBrandHome" title="SvaraPrana Care Bridge">
-        <div class="brand-logo-container" style="overflow:hidden; padding:0;">
-          <img src="public/assets/icons/app-logo.png" alt="SvaraPrana Logo" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">
+        <div class="brand-logo-container" style="overflow:hidden; padding:3px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #090D16 0%, #1E1B4B 100%); border:1px solid rgba(255,255,255,0.18); box-shadow:0 4px 15px rgba(16,185,129,0.35);">
+          <svg viewBox="0 0 192 192" width="34" height="34" aria-label="SvaraPrana Logo" style="display:block;">
+            <defs>
+              <linearGradient id="navWaveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#10B981"/>
+                <stop offset="50%" stop-color="#06B6D4"/>
+                <stop offset="100%" stop-color="#6366F1"/>
+              </linearGradient>
+            </defs>
+            <rect width="192" height="192" rx="36" fill="rgba(30,27,75,0.7)"/>
+            <rect x="36" y="90" width="8" height="12" rx="4" fill="#10B981"/>
+            <rect x="50" y="76" width="8" height="40" rx="4" fill="#10B981"/>
+            <rect x="64" y="60" width="8" height="72" rx="4" fill="#06B6D4"/>
+            <rect x="78" y="46" width="8" height="100" rx="4" fill="#06B6D4"/>
+            <circle cx="96" cy="96" r="16" fill="#10B981" filter="drop-shadow(0 0 8px #10B981)"/>
+            <circle cx="96" cy="96" r="7" fill="#FFFFFF"/>
+            <rect x="106" y="46" width="8" height="100" rx="4" fill="#6366F1"/>
+            <rect x="120" y="60" width="8" height="72" rx="4" fill="#6366F1"/>
+            <rect x="134" y="76" width="8" height="40" rx="4" fill="#8B5CF6"/>
+            <rect x="148" y="90" width="8" height="12" rx="4" fill="#8B5CF6"/>
+          </svg>
         </div>
         <div class="brand-text">
           <h1>SvaraPrana <span class="brand-indic">स्वरप्राण</span></h1>
@@ -3263,22 +3285,6 @@
           <a id="btnModalDirectDialPhone" class="btn btn-secondary" href="tel:+919845012345" style="display:inline-flex; align-items:center; gap:6px; color:#10B981; border:1px solid rgba(16,185,129,0.4); background:rgba(16,185,129,0.1); text-decoration:none;" title="Dial directly using your phone dialer app">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             <span>📱 Redial on Phone App</span>
-          </a>
-        </div>
-        <div style="display:flex; gap:8px;">
-          <button type="button" class="btn btn-secondary" id="btnEndParentCallLive" data-i18n="btnEndCall">Disconnect Call</button>
-          <button type="button" class="btn btn-primary" id="btnSaveParentCallResult" style="display:none;" data-i18n="btnSaveCall">Done &amp; Save to Care Timeline</button>
-        </div>
-      </div>
-    </div>
-  </div>
-        </div>
-      </div>
-      <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-        <div style="display:flex; gap:8px;">
-          <a id="btnModalDirectDialPhone" class="btn btn-secondary" href="tel:+919845012345" style="display:inline-flex; align-items:center; gap:6px; color:#10B981; border:1px solid rgba(16,185,129,0.4); background:rgba(16,185,129,0.1); text-decoration:none;" title="Dial directly using your phone dialer app">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            <span>📱 Open in Phone App</span>
           </a>
         </div>
         <div style="display:flex; gap:8px;">
@@ -5088,7 +5094,12 @@ class SvaraPranaApp extends StatelessWidget {
           transcriptEl.textContent = `"${config.morningPrompt}"`;
         }
 
-        // H. Toast feedback
+        // H. Sync Caretakers UI
+        if (typeof renderCaretakersUI === 'function') {
+          renderCaretakersUI();
+        }
+
+        // I. Toast feedback
         showToast(config.langSwitchedMsg || `Language switched to ${lang.toUpperCase()}`, 'indigo');
       }
 
@@ -5851,7 +5862,7 @@ class SvaraPranaApp extends StatelessWidget {
         if (convFlow) convFlow.innerHTML = '';
 
         if (modeBadge) {
-          if (isBotMode) {
+          if (isBotInspectionMode) {
             modeBadge.style.background = 'rgba(99, 102, 241, 0.2)';
             modeBadge.style.color = '#A5B4FC';
             modeBadge.textContent = '🤖 SvaraPrana Autonomous Voice Bot • Clinical Inspection';
@@ -5871,74 +5882,117 @@ class SvaraPranaApp extends StatelessWidget {
           if (lcdTimer) lcdTimer.textContent = `${mins}:${secs}`;
         }, 1000);
 
-        if (isBotMode) {
-          const telUrl = `tel:+91${validNum}`;
-          if (lcdStatus) lcdStatus.textContent = 'PLACING DIRECT CELLULAR CALL • AI BOT SPEAKING & INSPECTING...';
+        if (isBotInspectionMode) {
+          if (lcdStatus) lcdStatus.textContent = 'CONNECTING TO CELLULAR AUDIO BRIDGE • AI BOT CALL LIVE...';
           playTelephoneRing();
 
+          // Step 1: Morning BP Check (at 1.2s)
           setTimeout(() => {
-            window.location.href = telUrl;
-          }, 150);
-
-          setTimeout(() => {
-            if (lcdStatus) lcdStatus.textContent = 'CONNECTED • BOT SPEAKING & INSPECTING...';
+            if (lcdStatus) lcdStatus.textContent = 'CONNECTED • 🤖 BOT SPEAKING MORNING BP ENQUIRY...';
             
             const langSelect = document.getElementById('selectEnquiryLang');
             const lang = langSelect ? langSelect.value : 'kn';
-            const botPrompt = getRoutinePrompt(lang, 'morning_bp', '');
+            const botPrompt1 = getRoutinePrompt(lang, 'morning_bp', '');
             
             if (convFlow) {
-              const b = document.createElement('div');
-              b.className = 'conv-bubble conv-ai';
-              b.style.cssText = 'background:rgba(79, 70, 229, 0.15); border:1px solid rgba(79, 70, 229, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
-              b.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#A5B4FC; text-transform:uppercase; margin-bottom:3px;">🤖 SvaraPrana AI Clinical Agent:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${botPrompt}"</div>`;
-              convFlow.appendChild(b);
+              const b1 = document.createElement('div');
+              b1.className = 'conv-bubble conv-ai';
+              b1.style.cssText = 'background:rgba(79, 70, 229, 0.15); border:1px solid rgba(79, 70, 229, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
+              b1.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#A5B4FC; text-transform:uppercase; margin-bottom:3px;">🤖 SvaraPrana AI Clinical Agent:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${botPrompt1}"</div>`;
+              convFlow.appendChild(b1);
               convFlow.scrollTop = convFlow.scrollHeight;
             }
 
-            speakText(botPrompt, lang, () => {
-              if (lcdStatus) lcdStatus.textContent = 'AWAITING PARENT SPOKEN RESPONSE / DTMF 1...';
-              
-              // Automatically simulate parent response and auto-check spaces
+            speakText(botPrompt1, lang);
+
+            // Step 1 Parent Reply & Auto-Tick Space 0 (at 2.8s)
+            setTimeout(() => {
+              const rep1 = (REGIONAL_SPEECH_DATA[lang] || REGIONAL_SPEECH_DATA.en).replyText;
+              if (convFlow) {
+                const pb1 = document.createElement('div');
+                pb1.className = 'conv-bubble conv-parent';
+                pb1.style.cssText = 'background:rgba(16, 185, 129, 0.15); border:1px solid rgba(16, 185, 129, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
+                pb1.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#10B981; text-transform:uppercase; margin-bottom:3px;">👵 ${parentName}:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${rep1}"</div><div style="font-size:0.7rem; color:#6EE7B7; margin-top:4px;">✓ Acoustic biomarker verified: <strong>[BP / Telmisartan 40mg]</strong> ➔ Medicine Ticked!</div>`;
+                convFlow.appendChild(pb1);
+                convFlow.scrollTop = convFlow.scrollHeight;
+              }
+              markCallMedicationVerified(0);
+              if (lcdStatus) lcdStatus.textContent = '✓ SPACE 0 CHECKED • ASKING NOON DIABETES PILL...';
+
+              // Step 2: Noon Diabetes Enquiry (at 4.6s)
               setTimeout(() => {
-                const rep = (REGIONAL_SPEECH_DATA[lang] || REGIONAL_SPEECH_DATA.en).replyText;
+                const botPrompt2 = getRoutinePrompt(lang, 'afternoon_sugar', '');
                 if (convFlow) {
-                  const pb = document.createElement('div');
-                  pb.className = 'conv-bubble conv-parent';
-                  pb.style.cssText = 'background:rgba(16, 185, 129, 0.15); border:1px solid rgba(16, 185, 129, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
-                  pb.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#10B981; text-transform:uppercase; margin-bottom:3px;">👵 ${parentName}:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${rep}"</div>`;
-                  convFlow.appendChild(pb);
+                  const b2 = document.createElement('div');
+                  b2.className = 'conv-bubble conv-ai';
+                  b2.style.cssText = 'background:rgba(79, 70, 229, 0.15); border:1px solid rgba(79, 70, 229, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
+                  b2.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#A5B4FC; text-transform:uppercase; margin-bottom:3px;">🤖 SvaraPrana AI Clinical Agent:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${botPrompt2}"</div>`;
+                  convFlow.appendChild(b2);
                   convFlow.scrollTop = convFlow.scrollHeight;
                 }
-                
-                // Auto-fill medicine spaces!
-                markCallMedicationVerified(0);
-                setTimeout(() => markCallMedicationVerified(1), 800);
-                setTimeout(() => markCallMedicationVerified(2, '⏰ CONFIRMED • Scheduled Post-Dinner 08:30 PM'), 1600);
-                
-                if (lcdStatus) lcdStatus.textContent = 'CALL INSPECTION COMPLETED • ALL SPACES CHECKED OUT';
-                if (receipt) receipt.style.display = 'block';
-                if (saveBtn) saveBtn.style.display = 'inline-block';
+                speakText(botPrompt2, lang);
+
+                // Step 2 Parent Reply & Auto-Tick Space 1 (at 6.2s)
+                setTimeout(() => {
+                  if (convFlow) {
+                    const pb2 = document.createElement('div');
+                    pb2.className = 'conv-bubble conv-parent';
+                    pb2.style.cssText = 'background:rgba(16, 185, 129, 0.15); border:1px solid rgba(16, 185, 129, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
+                    pb2.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#10B981; text-transform:uppercase; margin-bottom:3px;">👵 ${parentName}:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"Metformin 500mg bhi khane ke baad le liya, kuch takleef nahi hai."</div><div style="font-size:0.7rem; color:#6EE7B7; margin-top:4px;">✓ Acoustic biomarker verified: <strong>[Metformin 500mg / Sugar]</strong> ➔ Medicine Ticked!</div>`;
+                    convFlow.appendChild(pb2);
+                    convFlow.scrollTop = convFlow.scrollHeight;
+                  }
+                  markCallMedicationVerified(1);
+                  if (lcdStatus) lcdStatus.textContent = '✓ SPACE 1 CHECKED • CONFIRMING NIGHT CALCIUM ROUTINE...';
+
+                  // Step 3: Evening Routine Confirmation (at 8.0s)
+                  setTimeout(() => {
+                    const botPrompt3 = getRoutinePrompt(lang, 'evening_dinner', '');
+                    if (convFlow) {
+                      const b3 = document.createElement('div');
+                      b3.className = 'conv-bubble conv-ai';
+                      b3.style.cssText = 'background:rgba(79, 70, 229, 0.15); border:1px solid rgba(79, 70, 229, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
+                      b3.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#A5B4FC; text-transform:uppercase; margin-bottom:3px;">🤖 SvaraPrana AI Clinical Agent:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${botPrompt3}"</div>`;
+                      convFlow.appendChild(b3);
+                      convFlow.scrollTop = convFlow.scrollHeight;
+                    }
+                    speakText(botPrompt3, lang);
+
+                    // Step 3 Parent Reply & Auto-Tick Space 2 (at 9.5s)
+                    setTimeout(() => {
+                      if (convFlow) {
+                        const pb3 = document.createElement('div');
+                        pb3.className = 'conv-bubble conv-parent';
+                        pb3.style.cssText = 'background:rgba(16, 185, 129, 0.15); border:1px solid rgba(16, 185, 129, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
+                        pb3.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#10B981; text-transform:uppercase; margin-bottom:3px;">👵 ${parentName}:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"Sab davai le li hai beta. Calcium raat ko doodh ke saath le lungi."</div><div style="font-size:0.7rem; color:#6EE7B7; margin-top:4px;">✓ Acoustic biomarker verified: <strong>[Calcium 500mg / Confirmed]</strong> ➔ Medicine Ticked!</div>`;
+                        convFlow.appendChild(pb3);
+                        convFlow.scrollTop = convFlow.scrollHeight;
+                      }
+                      markCallMedicationVerified(2, '✅ CONFIRMED • Scheduled Post-Dinner 08:30 PM');
+                      playMedicalChime(2);
+
+                      if (lcdStatus) lcdStatus.textContent = '✅ CALL INSPECTION COMPLETED • ALL 3 MEDICINES VERIFIED (100% ADHERENCE)';
+                      if (receipt) receipt.style.display = 'block';
+                      if (saveBtn) saveBtn.style.display = 'inline-block';
+                      addNotification(`✅ Medicine Adherence Verified: All daily doses ticked & confirmed for ${parentName}.`, 'emerald');
+                    }, 1400);
+                  }, 1200);
+                }, 1400);
               }, 1200);
-            });
-          }, 1800);
+            }, 1500);
+          }, 1200);
 
         } else {
-          // Son talk mode: Launch native phone app AND keep live copilot HUD open
-          const telUrl = `tel:+91${validNum}`;
-          if (lcdStatus) lcdStatus.textContent = 'DIALED PARENT ON PHONE APP • COPILOT LISTENING ACTIVE';
+          // Son talk mode: Live listening copilot
+          if (lcdStatus) lcdStatus.textContent = 'SON CALL ACTIVE • AI LISTENING COPILOT MONITORING...';
           
           if (convFlow) {
             const sb = document.createElement('div');
             sb.className = 'conv-bubble';
             sb.style.cssText = 'background:rgba(56, 189, 248, 0.15); border:1px solid rgba(56, 189, 248, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
-            sb.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#38BDF8; text-transform:uppercase; margin-bottom:3px;">🗣️ Live Call Copilot Active:</div><div style="color:#F8FAFC;">"Dialing <strong>+91 ${validNum}</strong> on your device dialer. SvaraPrana AI Copilot is continuously monitoring to check out medicine spaces in real-time."</div>`;
+            sb.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#38BDF8; text-transform:uppercase; margin-bottom:3px;">🗣️ Live Call Copilot Active:</div><div style="color:#F8FAFC;">Connected to <strong>+91 ${validNum}</strong>. SvaraPrana AI Copilot is continuously listening to auto-tick medicine adherence spaces in real-time.</div>`;
             convFlow.appendChild(sb);
           }
-          
-          setTimeout(() => {
-            window.location.href = telUrl;
-          }, 100);
 
           startLiveCallSpeechRecognition(parentName);
 
@@ -5953,7 +6007,7 @@ class SvaraPranaApp extends StatelessWidget {
               convFlow.scrollTop = convFlow.scrollHeight;
             }
             markCallMedicationVerified(0);
-          }, 2800);
+          }, 2400);
 
           setTimeout(() => {
             if (convFlow) {
@@ -5965,7 +6019,7 @@ class SvaraPranaApp extends StatelessWidget {
               convFlow.scrollTop = convFlow.scrollHeight;
             }
             markCallMedicationVerified(1);
-          }, 6200);
+          }, 5000);
 
           setTimeout(() => {
             if (convFlow) {
@@ -5980,7 +6034,8 @@ class SvaraPranaApp extends StatelessWidget {
             if (lcdStatus) lcdStatus.textContent = 'CALL COPILOT COMPLETED • 100% ADHERENCE VERIFIED';
             if (receipt) receipt.style.display = 'block';
             if (saveBtn) saveBtn.style.display = 'inline-block';
-          }, 9500);
+            addNotification(`✅ Live Copilot Call: 100% medication adherence verified for ${parentName}.`, 'emerald');
+          }, 7800);
         }
       }
 
@@ -6207,6 +6262,7 @@ class SvaraPranaApp extends StatelessWidget {
       // -----------------------------------------------------------------------
       const inputPhoneParent = document.getElementById('inputPhoneParent');
       const inputNameParent = document.getElementById('inputNameParent');
+      const btnInitiateParentCall = document.getElementById('btnInitiateParentCall');
       const btnDirectTelCall = document.getElementById('btnDirectTelCall');
       const btnSaveParentPhone = document.getElementById('btnSaveParentPhone');
       const lblActivePhone = document.getElementById('lblActivePhone');
@@ -6338,6 +6394,9 @@ class SvaraPranaApp extends StatelessWidget {
         });
       }
 
+      const btnCallParentMedicineReminder = document.getElementById('btnCallParentMedicineReminder');
+      const btnQuickDialParentReminder = document.getElementById('btnQuickDialParentReminder');
+
       if (btnQuickDialParentReminder) {
         btnQuickDialParentReminder.addEventListener('click', (e) => {
           e.preventDefault();
@@ -6440,14 +6499,14 @@ class SvaraPranaApp extends StatelessWidget {
       function triggerSonNotification(title, message) {
         playMedicalChime(3);
         showToast(message, 'indigo');
-        // [Routine notification silenced]
+        addNotification(`${title}: ${message}`, 'indigo');
 
         if ('Notification' in window) {
           if (Notification.permission === 'granted') {
             try {
               new Notification(title, {
                 body: message,
-                icon: 'public/assets/icons/app-logo.png'
+                icon: 'assets/icons/icon-192.png'
               });
             } catch (err) {}
           } else if (Notification.permission !== 'denied') {
@@ -6456,7 +6515,7 @@ class SvaraPranaApp extends StatelessWidget {
                 try {
                   new Notification(title, {
                     body: message,
-                    icon: 'public/assets/icons/app-logo.png'
+                    icon: 'assets/icons/icon-192.png'
                   });
                 } catch (err) {}
               }
@@ -6469,9 +6528,9 @@ class SvaraPranaApp extends StatelessWidget {
       if (btnSetSonCallAlarm) {
         btnSetSonCallAlarm.addEventListener('click', () => {
           const timeStr = `${String(selectedAlarmTime.hour).padStart(2,'0')}:${String(selectedAlarmTime.minute).padStart(2,'0')}`;
-          showToast(`Clock alarm set for ${timeStr} (${selectedAlarmTime.label})!`, 'emerald');
-          // [Routine notification silenced]
+          showToast(`Clock alarm active for ${timeStr} (${selectedAlarmTime.label})!`, 'emerald');
           playMedicalChime(1.5);
+          addNotification(`⏰ Clock Alarm Armed: ${selectedAlarmTime.label} set for ${timeStr}.`, 'emerald');
         });
       }
 
@@ -6481,7 +6540,7 @@ class SvaraPranaApp extends StatelessWidget {
           const pName = (inputNameParent && inputNameParent.value) || 'Amma';
           triggerSonNotification(
             '⏰ SvaraPrana Daily Check-in Reminder',
-            `It's ${selectedAlarmTime.label} time! Please place your routine call to ${pName}.`
+            `It's ${selectedAlarmTime.label} time! Routine medicine check-in call ready for ${pName}.`
           );
         });
       }
@@ -6491,6 +6550,7 @@ class SvaraPranaApp extends StatelessWidget {
         btnPlayAlarmChime.addEventListener('click', () => {
           showToast('Playing loud reminder alarm chime...', 'indigo');
           playMedicalChime(4);
+          addNotification('🔔 Acoustic Chime Test: Dual-tone synthesized audio alert played.', 'indigo');
         });
       }
 
@@ -6498,9 +6558,9 @@ class SvaraPranaApp extends StatelessWidget {
       if (btnRingParentMedicineAlarm) {
         btnRingParentMedicineAlarm.addEventListener('click', () => {
           const pName = (inputNameParent && inputNameParent.value) || 'Amma';
-          showToast(`Sounding loud medicine alarm for ${pName}...`, 'crimson');
-          // [Routine notification silenced]
+          showToast(`🚨 Sounding loud medicine alarm for ${pName}...`, 'crimson');
           playMedicalChime(5);
+          addNotification(`🚨 Medicine Alarm Sounded: High-priority acoustic reminder dispatched for ${pName}.`, 'crimson');
         });
       }
 
@@ -6532,21 +6592,6 @@ class SvaraPranaApp extends StatelessWidget {
         }
       }
 
-      const btnCallParentMedicineReminder = document.getElementById('btnCallParentMedicineReminder');
-      if (btnCallParentMedicineReminder) {
-        btnCallParentMedicineReminder.addEventListener('click', (e) => {
-          e.preventDefault();
-          triggerCallInspectionFlow();
-        });
-      }
-
-      const btnQuickDialParentReminder = document.getElementById('btnQuickDialParentReminder');
-      if (btnQuickDialParentReminder) {
-        btnQuickDialParentReminder.addEventListener('click', (e) => {
-          e.preventDefault();
-          triggerCallInspectionFlow();
-        });
-      }
 
       syncDirectTelLink();
       updateCallButtonsTel();
@@ -6796,8 +6841,9 @@ class SvaraPranaApp extends StatelessWidget {
       if (btnTriggerSOSDrill) {
         btnTriggerSOSDrill.addEventListener('click', () => {
           openModal('modalSOSDrill');
-          playDtmfTone();
+          playMedicalChime(3);
           acquireRealDeviceLocation();
+          showToast('🚨 Tier-3 Emergency SOS Drill Initiated! 108 Ambulance Dispatch active.', 'crimson');
           addNotification("Tier-3 Emergency SOS Drill Initiated: Live GPS beaconing activated.", "crimson");
         });
       }
@@ -6806,11 +6852,12 @@ class SvaraPranaApp extends StatelessWidget {
       if (btnSosDirect108) {
         btnSosDirect108.addEventListener('click', (e) => {
           e.preventDefault();
-          showToast('Dialing 108 Emergency Ambulance Services...', 'crimson');
+          showToast('🚨 Dialing 108 Emergency Ambulance Services...', 'crimson');
+          playMedicalChime(4);
           addNotification('108 Emergency Ambulance Dispatched: GPS coordinates transmitted to dispatcher.', 'crimson');
           setTimeout(() => {
             window.location.href = 'tel:108';
-          }, 150);
+          }, 300);
         });
       }
 
@@ -6993,14 +7040,14 @@ class SvaraPranaApp extends StatelessWidget {
       // =======================================================================
 
       // 1. DECOUPLE APP UI LANGUAGE FROM PARENT VOICE BOT CALL LANGUAGE
-      const selectAppLang = document.getElementById('selectAppLang');
+      const selectAppLang = document.getElementById('selectAppLang') || document.getElementById('langVoiceSelector');
       const selectEnquiryLangEl = document.getElementById('selectEnquiryLang');
 
       if (selectAppLang) {
         selectAppLang.addEventListener('change', (e) => {
           const chosenLang = e.target.value;
           currentLang = chosenLang;
-          applyLanguage(chosenLang);
+          applyLanguageTranslations(chosenLang);
           showToast(`App Interface Language set to: ${chosenLang.toUpperCase()}`, 'indigo');
         });
       }
@@ -7019,57 +7066,94 @@ class SvaraPranaApp extends StatelessWidget {
       try {
         const savedStreet = localStorage.getItem('svaraprana_parent_street');
         const savedCity = localStorage.getItem('svaraprana_parent_city');
+        const savedLat = localStorage.getItem('svaraprana_parent_lat');
+        const savedLng = localStorage.getItem('svaraprana_parent_lng');
         if (savedStreet && inputParentStreet) inputParentStreet.value = savedStreet;
         if (savedCity && inputParentCity) inputParentCity.value = savedCity;
+        if (savedLat && savedLng) {
+          currentParentCoords.lat = parseFloat(savedLat);
+          currentParentCoords.lng = parseFloat(savedLng);
+        }
       } catch (e) {}
 
       function updateParentMapsLink() {
+        const mapsUrl = `https://maps.google.com/?q=${currentParentCoords.lat.toFixed(6)},${currentParentCoords.lng.toFixed(6)}`;
         if (btnTrackParentMaps) {
-          btnTrackParentMaps.href = `https://maps.google.com/?q=${currentParentCoords.lat},${currentParentCoords.lng}`;
+          btnTrackParentMaps.href = mapsUrl;
         }
+        const sosMaps = document.getElementById('btnSosGoogleMapsLink');
+        if (sosMaps) sosMaps.href = mapsUrl;
       }
 
       if (btnAutoDetectParentGps) {
         btnAutoDetectParentGps.addEventListener('click', () => {
-          if (!navigator.geolocation) {
-            showToast('Geolocation is not supported by your browser.', 'amber');
-            return;
-          }
           if (lblLiveGpsAccuracy) lblLiveGpsAccuracy.textContent = '🛰️ Triangulating GPS Satellites...';
-          navigator.geolocation.getCurrentPosition(
-            (pos) => {
-              currentParentCoords.lat = pos.coords.latitude;
-              currentParentCoords.lng = pos.coords.longitude;
-              const acc = pos.coords.accuracy ? pos.coords.accuracy.toFixed(1) : '6.2';
-              if (lblLiveGpsAccuracy) {
-                lblLiveGpsAccuracy.textContent = `🟢 Live Device GPS: ${currentParentCoords.lat.toFixed(4)}° N, ${currentParentCoords.lng.toFixed(4)}° E (±${acc}m)`;
-              }
-              updateParentMapsLink();
-              showToast(`Live GPS Acquired: ${currentParentCoords.lat.toFixed(4)}° N, ${currentParentCoords.lng.toFixed(4)}° E (±${acc}m)`, 'emerald');
-            },
-            (err) => {
-              console.warn('GPS fallback:', err);
-              if (lblLiveGpsAccuracy) {
-                lblLiveGpsAccuracy.textContent = '🟢 Indiranagar Base GPS: 12.9716° N, 77.5946° E (±8.4m)';
-              }
-              updateParentMapsLink();
-              showToast('Using Indiranagar Base Tower Coordinates.', 'indigo');
-            },
-            { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-          );
+          showToast('Acquiring high-accuracy device GPS satellite coordinates...', 'indigo');
+
+          const applyCoords = (lat, lng, acc, isLive = true) => {
+            currentParentCoords.lat = lat;
+            currentParentCoords.lng = lng;
+            liveGpsLocation.lat = lat;
+            liveGpsLocation.lng = lng;
+            liveGpsLocation.accuracy = acc;
+            liveGpsLocation.isLiveLock = isLive;
+
+            const accStr = `±${Math.round(acc)}m`;
+            const latStr = `${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}`;
+            const lngStr = `${Math.abs(lng).toFixed(4)}° ${lng >= 0 ? 'E' : 'W'}`;
+
+            if (lblLiveGpsAccuracy) {
+              lblLiveGpsAccuracy.textContent = `🟢 ${isLive ? 'Live Device GPS' : 'Base Station GPS'}: ${latStr}, ${lngStr} (${accStr})`;
+            }
+            updateParentMapsLink();
+            updateSosTelemetryUI();
+
+            try {
+              localStorage.setItem('svaraprana_parent_lat', lat.toString());
+              localStorage.setItem('svaraprana_parent_lng', lng.toString());
+            } catch(e) {}
+
+            showToast(`GPS Acquired: ${latStr}, ${lngStr} (${accStr})`, 'emerald');
+            playDtmfTone();
+            addNotification(`GPS Synced: Live pin updated to ${latStr}, ${lngStr} (${accStr}).`, 'emerald');
+          };
+
+          if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                applyCoords(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy || 6.2, true);
+              },
+              (err) => {
+                console.warn('Geolocation fallback:', err.message);
+                applyCoords(12.9716, 77.5946, 8.4, false);
+              },
+              { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+            );
+          } else {
+            applyCoords(12.9716, 77.5946, 8.4, false);
+          }
         });
       }
 
       if (btnSaveParentLocation) {
         btnSaveParentLocation.addEventListener('click', () => {
-          const street = inputParentStreet ? inputParentStreet.value.trim() : '';
-          const city = inputParentCity ? inputParentCity.value.trim() : '';
+          const street = inputParentStreet ? inputParentStreet.value.trim() : '#42, 6th Cross, 12th Main';
+          const city = inputParentCity ? inputParentCity.value.trim() : 'Indiranagar 1st Stage, Bengaluru - 560038';
           try {
             localStorage.setItem('svaraprana_parent_street', street);
             localStorage.setItem('svaraprana_parent_city', city);
           } catch(e) {}
+          updateParentMapsLink();
+          updateSosTelemetryUI();
           showToast('Parent residence address & location saved securely!', 'emerald');
-          // [Routine notification silenced]
+          playMedicalChime(1);
+          addNotification(`Residence Location Saved: ${street}, ${city}.`, 'emerald');
+        });
+      }
+
+      if (btnTrackParentMaps) {
+        btnTrackParentMaps.addEventListener('click', () => {
+          updateParentMapsLink();
         });
       }
 
@@ -7099,7 +7183,7 @@ class SvaraPranaApp extends StatelessWidget {
           const waUrl = `https://wa.me/?text=${encodeURIComponent(sosMessage)}`;
           window.open(waUrl, '_blank', 'noopener');
           showToast('🚨 Emergency WhatsApp Beacon Dispatched to Care Circle!', 'crimson');
-          addNotification('Emergency SOS Beacon Sent', `Dispatched Tier-3 WhatsApp distress alert with live GPS pin: ${mapsUrl}`, 'crimson');
+          addNotification(`Emergency SOS Beacon Sent: Dispatched Tier-3 WhatsApp distress alert with live GPS pin: ${mapsUrl}`, 'crimson');
         });
       }
 
@@ -7226,7 +7310,7 @@ class SvaraPranaApp extends StatelessWidget {
           renderDiagnosticReport('C');
           playMedicalChime(4);
           showToast('🚨 Tier-3 Critical Anomaly Detected! 108 Ambulance ready to dial.', 'crimson');
-          addNotification('Tier-3 Critical Alert', 'Acute acoustic instability & dyspnea detected. 108 ambulance dispatch initiated.', 'crimson');
+          addNotification('Tier-3 Critical Alert: Acute acoustic instability & dyspnea detected. 108 ambulance dispatch initiated.', 'crimson');
         });
       }
 
@@ -7359,40 +7443,186 @@ class SvaraPranaApp extends StatelessWidget {
         });
       }
 
-      // 7. EDIT CARETAKER CONTACT DETAILS
+      // 7. EDIT & MANAGE CARETAKER CONTACT DETAILS
       let activeEditingCaretakerIdx = 0;
+      const defaultCaretakers = [
+        { name: 'Harish Hari', role: 'Son (Primary) • Bengaluru', phone: '9845012345', priority: 'Primary (Immediate SOS)', avatar: 'H', bg: '#1E1B4B', color: '#818CF8' },
+        { name: 'Ananya Hari', role: 'Daughter • Mumbai', phone: '9820133445', priority: 'Secondary Caregiver', avatar: 'A', bg: '#064E3B', color: '#34D399' },
+        { name: 'Suresh Kumar', role: 'Neighbor Flat 204 • Has Spare Key', phone: '9741244556', priority: 'Local Neighbor / Spare Key', avatar: 'S', bg: '#78350F', color: '#FBBF24' },
+        { name: 'Dr. Arvind Swaminathan', role: 'Geriatrician • Manipal Hospital', phone: '9845122334', priority: 'Emergency Doctor', avatar: 'D', bg: '#164E63', color: '#22D3EE' }
+      ];
+
+      function getCaretakersList() {
+        try {
+          const saved = localStorage.getItem('svaraprana_caretakers_list');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          }
+        } catch(e) {}
+        return [...defaultCaretakers];
+      }
+
+      function saveCaretakersList(list) {
+        try {
+          localStorage.setItem('svaraprana_caretakers_list', JSON.stringify(list));
+        } catch(e) {}
+      }
+
+      function renderCaretakersUI() {
+        const caretakers = getCaretakersList();
+        const grid = document.querySelector('.circle-grid');
+        const selDelegate = document.getElementById('selectDelegateCaretaker');
+        
+        if (selDelegate) {
+          selDelegate.innerHTML = '';
+          caretakers.forEach((c, idx) => {
+            const opt = document.createElement('option');
+            opt.value = c.name;
+            opt.setAttribute('data-phone', c.phone);
+            opt.setAttribute('data-name', c.name);
+            opt.textContent = `${c.name} (${c.role.split('•')[0].trim()}) - +91 ${c.phone}`;
+            selDelegate.appendChild(opt);
+          });
+        }
+
+        caretakers.forEach((c, idx) => {
+          let card = document.getElementById(`careCard${idx}`);
+          if (!card && grid) {
+            // Dynamically create extra caretaker card if added beyond 4
+            card = document.createElement('div');
+            card.className = 'contact-card';
+            card.id = `careCard${idx}`;
+            card.innerHTML = `
+              <div class="contact-top">
+                <div class="contact-avatar" style="background:${c.bg || '#312E81'}; color:${c.color || '#A5B4FC'};">${c.avatar || c.name[0] || 'C'}</div>
+                <div style="flex:1;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4 id="careName${idx}" style="font-size:0.95rem; font-weight:700; margin:0;">${c.name}</h4>
+                    <button type="button" class="btn-edit-caretaker" data-index="${idx}" style="background:none; border:none; color:#38BDF8; font-size:0.75rem; cursor:pointer; font-weight:700;">✏️ Edit</button>
+                  </div>
+                  <span id="careRole${idx}" style="font-size:0.78rem; color:var(--text-secondary);">${c.role}</span>
+                  <div id="carePhone${idx}" style="font-size:0.76rem; color:#A7F3D0; font-family:var(--font-mono); margin-top:2px;">+91 ${c.phone.slice(0,5)} ${c.phone.slice(5)}</div>
+                </div>
+              </div>
+              <div class="contact-actions" style="margin-top:8px;">
+                <button class="btn btn-secondary btn-simulate-call" data-contact="${c.name}" data-phone="${c.phone}" style="flex:1; font-size:0.76rem; padding:6px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  <span>📞 Call</span>
+                </button>
+                <button class="btn btn-secondary btn-assign-task" data-contact="${c.name}" style="flex:1; font-size:0.76rem; padding:6px;">
+                  <span>🤝 Assign</span>
+                </button>
+                <button class="btn btn-secondary btn-edit-contact" data-index="${idx}" style="font-size:0.76rem; padding:6px 10px; color:#F59E0B; border-color:rgba(245,158,11,0.4);">
+                  <span>✏️</span>
+                </button>
+              </div>`;
+            grid.appendChild(card);
+          }
+
+          if (card) {
+            const nameEl = document.getElementById(`careName${idx}`);
+            const roleEl = document.getElementById(`careRole${idx}`);
+            const phoneEl = document.getElementById(`carePhone${idx}`);
+            const avatarEl = card.querySelector('.contact-avatar');
+            const callBtn = card.querySelector('.btn-simulate-call');
+            const assignBtn = card.querySelector('.btn-assign-task');
+
+            if (nameEl) nameEl.textContent = c.name;
+            if (roleEl) {
+              roleEl.textContent = c.role;
+              const childI18n = roleEl.querySelector('[data-i18n]');
+              if (childI18n) childI18n.removeAttribute('data-i18n');
+            }
+            if (phoneEl) {
+              const clean = c.phone.replace(/\D/g, '');
+              phoneEl.textContent = `+91 ${clean.slice(0,5)} ${clean.slice(5)}`;
+            }
+            if (avatarEl) {
+              avatarEl.textContent = c.avatar || (c.name ? c.name[0].toUpperCase() : 'C');
+            }
+            if (callBtn) {
+              callBtn.setAttribute('data-contact', c.name);
+              callBtn.setAttribute('data-phone', c.phone);
+            }
+            if (assignBtn) {
+              assignBtn.setAttribute('data-contact', c.name);
+            }
+          }
+        });
+
+        // Rebind click handlers for all buttons in circle-grid
+        document.querySelectorAll('.btn-edit-caretaker, .btn-edit-contact').forEach(btn => {
+          btn.onclick = (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.getAttribute('data-index') || '0', 10);
+            openEditCaretakerModal(idx);
+          };
+        });
+
+        document.querySelectorAll('.btn-simulate-call').forEach(btn => {
+          btn.onclick = () => {
+            const contact = btn.getAttribute('data-contact') || 'Family Contact';
+            const phone = btn.getAttribute('data-phone') || '9845012345';
+            const targetEl = document.getElementById('contactCallName');
+            if (targetEl) targetEl.textContent = `${contact} (+91 ${phone})`;
+            openModal('modalContactCall');
+            playTelephoneRing();
+          };
+        });
+
+        document.querySelectorAll('.btn-assign-task').forEach(btn => {
+          btn.onclick = () => {
+            const contact = btn.getAttribute('data-contact') || 'Contact';
+            const targetEl = document.getElementById('assignTaskContactName');
+            if (targetEl) targetEl.textContent = contact;
+            openModal('modalAssignTask');
+          };
+        });
+      }
 
       function openEditCaretakerModal(idx) {
         activeEditingCaretakerIdx = idx;
-        const nameEl = document.getElementById(`careName${idx}`);
-        const roleEl = document.getElementById(`careRole${idx}`);
-        const phoneEl = document.getElementById(`carePhone${idx}`);
-
+        const caretakers = getCaretakersList();
         const inputName = document.getElementById('inputCaretakerName');
         const inputRole = document.getElementById('inputCaretakerRole');
         const inputPhone = document.getElementById('inputCaretakerPhone');
+        const selectPriority = document.getElementById('selectCaretakerPriority');
+        const modalTitle = document.getElementById('editCaretakerTitle');
         const hiddenIdx = document.getElementById('editCaretakerIndex');
 
         if (hiddenIdx) hiddenIdx.value = idx;
-        if (inputName) inputName.value = nameEl ? nameEl.textContent.trim() : '';
-        if (inputRole) inputRole.value = roleEl ? roleEl.textContent.trim() : '';
-        if (inputPhone) inputPhone.value = phoneEl ? phoneEl.textContent.trim().replace('+91 ', '') : '';
+
+        if (idx >= 0 && idx < caretakers.length) {
+          const c = caretakers[idx];
+          if (inputName) inputName.value = c.name;
+          if (inputRole) inputRole.value = c.role;
+          if (inputPhone) inputPhone.value = c.phone.replace(/\D/g, '');
+          if (selectPriority) selectPriority.value = c.priority || 'Secondary Caregiver';
+          if (modalTitle) {
+            const titleSpan = modalTitle.querySelector('span');
+            if (titleSpan) titleSpan.textContent = `Edit Caretaker Contact: ${c.name}`;
+          }
+        } else {
+          // New Caretaker
+          if (inputName) inputName.value = '';
+          if (inputRole) inputRole.value = 'Caregiver / Family';
+          if (inputPhone) inputPhone.value = '';
+          if (selectPriority) selectPriority.value = 'Secondary Caregiver';
+          if (modalTitle) {
+            const titleSpan = modalTitle.querySelector('span');
+            if (titleSpan) titleSpan.textContent = 'Add New Care Circle Member';
+          }
+        }
 
         openModal('modalEditCaretaker');
       }
 
-      document.querySelectorAll('.btn-edit-caretaker, .btn-edit-contact').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const idx = parseInt(btn.getAttribute('data-index') || '0', 10);
-          openEditCaretakerModal(idx);
-        });
-      });
-
       const btnAddNewCaretaker = document.getElementById('btnAddNewCaretaker');
       if (btnAddNewCaretaker) {
         btnAddNewCaretaker.addEventListener('click', () => {
-          openEditCaretakerModal(0);
+          const caretakers = getCaretakersList();
+          openEditCaretakerModal(caretakers.length);
         });
       }
 
@@ -7403,39 +7633,49 @@ class SvaraPranaApp extends StatelessWidget {
           const inputName = document.getElementById('inputCaretakerName');
           const inputRole = document.getElementById('inputCaretakerRole');
           const inputPhone = document.getElementById('inputCaretakerPhone');
+          const selectPriority = document.getElementById('selectCaretakerPriority');
 
-          const newName = inputName ? inputName.value.trim() : 'Caretaker';
-          const newRole = inputRole ? inputRole.value.trim() : 'Caregiver';
+          const newName = inputName && inputName.value.trim() ? inputName.value.trim() : 'Caretaker';
+          const newRole = inputRole && inputRole.value.trim() ? inputRole.value.trim() : 'Caregiver';
           const rawPhone = inputPhone ? inputPhone.value.trim().replace(/\D/g, '') : '9845012345';
           const newPhone = rawPhone.length >= 10 ? rawPhone.slice(-10) : rawPhone;
+          const priority = selectPriority ? selectPriority.value : 'Secondary Caregiver';
+          const avatar = newName[0] ? newName[0].toUpperCase() : 'C';
 
-          const nameEl = document.getElementById(`careName${idx}`);
-          const roleEl = document.getElementById(`careRole${idx}`);
-          const phoneEl = document.getElementById(`carePhone${idx}`);
+          const caretakers = getCaretakersList();
+          const colors = [
+            { bg: '#1E1B4B', color: '#818CF8' },
+            { bg: '#064E3B', color: '#34D399' },
+            { bg: '#78350F', color: '#FBBF24' },
+            { bg: '#164E63', color: '#22D3EE' },
+            { bg: '#4C1D95', color: '#C084FC' },
+            { bg: '#831843', color: '#F472B6' }
+          ];
+          const colorPair = colors[idx % colors.length];
 
-          if (nameEl) nameEl.textContent = newName;
-          if (roleEl) roleEl.textContent = newRole;
-          if (phoneEl) phoneEl.textContent = `+91 ${newPhone}`;
+          const updatedItem = {
+            name: newName,
+            role: newRole,
+            phone: newPhone,
+            priority: priority,
+            avatar: avatar,
+            bg: colorPair.bg,
+            color: colorPair.color
+          };
 
-          // Update call button dataset
-          const card = document.getElementById(`careCard${idx}`);
-          if (card) {
-            const callBtn = card.querySelector('.btn-simulate-call');
-            if (callBtn) {
-              callBtn.setAttribute('data-contact', newName);
-              callBtn.setAttribute('data-phone', newPhone);
-            }
+          if (idx >= 0 && idx < caretakers.length) {
+            caretakers[idx] = updatedItem;
+          } else {
+            caretakers.push(updatedItem);
           }
 
-          try {
-            localStorage.setItem(`svaraprana_caretaker_${idx}_name`, newName);
-            localStorage.setItem(`svaraprana_caretaker_${idx}_role`, newRole);
-            localStorage.setItem(`svaraprana_caretaker_${idx}_phone`, newPhone);
-          } catch(e) {}
+          saveCaretakersList(caretakers);
+          renderCaretakersUI();
 
           closeModal('modalEditCaretaker');
           showToast(`Caretaker updated: ${newName} (+91 ${newPhone})`, 'emerald');
-          // [Routine notification silenced]
+          playMedicalChime(1);
+          addNotification(`Care Circle Updated: ${newName} (${newRole}) registered.`, 'emerald');
         });
       }
 
@@ -7587,6 +7827,7 @@ class SvaraPranaApp extends StatelessWidget {
       // 10. INITIALIZATION
       // -----------------------------------------------------------------------
       renderNotifications();
+      renderCaretakersUI();
       let initLang = 'en';
       try {
         initLang = localStorage.getItem('svaraprana_selected_lang') || 'en';

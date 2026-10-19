@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090D16"/>
+      <stop offset="50%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="35%" stop-color="#06B6D4"/>
+      <stop offset="70%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Shield Rounded Rect -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <rect width="504" height="504" x="4" y="4" rx="108" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="4"/>
+
+  <!-- Glowing Soundwave Heart / Vitality Bridge -->
+  <g filter="url(#glow)">
+    <!-- Ambient Rings -->
+    <circle cx="256" cy="256" r="170" fill="none" stroke="rgba(99,102,241,0.2)" stroke-width="2" stroke-dasharray="8 6"/>
+    <circle cx="256" cy="256" r="130" fill="none" stroke="rgba(16,185,129,0.2)" stroke-width="2"/>
+
+    <!-- Acoustic Waveform Bars (Svara / Voice) -->
+    <rect x="110" y="240" width="12" height="32" rx="6" fill="#10B981"/>
+    <rect x="136" y="215" width="12" height="82" rx="6" fill="#10B981"/>
+    <rect x="162" y="190" width="12" height="132" rx="6" fill="#06B6D4"/>
+    <rect x="188" y="160" width="12" height="192" rx="6" fill="#06B6D4"/>
+    <rect x="214" y="210" width="12" height="92" rx="6" fill="#3B82F6"/>
+    
+    <!-- Central Prana Pulse Heart Curve -->
+    <path d="M 256 180 C 256 150, 220 130, 195 160 C 170 190, 200 240, 256 295 C 312 240, 342 190, 317 160 C 292 130, 256 150, 256 180 Z" fill="none" stroke="url(#waveGrad)" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Continuing Waveform Bars -->
+    <rect x="286" y="200" width="12" height="112" rx="6" fill="#6366F1"/>
+    <rect x="312" y="170" width="12" height="172" rx="6" fill="#6366F1"/>
+    <rect x="338" y="210" width="12" height="92" rx="6" fill="#8B5CF6"/>
+    <rect x="364" y="225" width="12" height="62" rx="6" fill="#A855F7"/>
+    <rect x="390" y="242" width="12" height="28" rx="6" fill="#A855F7"/>
+  </g>
+
+  <!-- Central Pulse Orb -->
+  <circle cx="256" cy="256" r="16" fill="#10B981" filter="url(#glow)"/>
+  <circle cx="256" cy="256" r="8" fill="#FFFFFF"/>
+
+  <!-- Devanagari Prana Inscription at Bottom -->
+  <text x="256" y="440" font-family="'Noto Sans Devanagari', 'Segoe UI', sans-serif" font-size="44" font-weight="bold" fill="#E2E8F0" text-anchor="middle" letter-spacing="4">
+    स्वरप्राण
+  </text>
+</svg>

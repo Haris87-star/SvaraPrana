@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bgGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090D16"/>
+      <stop offset="50%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="waveGrad192" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="50%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="42" fill="url(#bgGrad192)"/>
+  <rect width="188" height="188" x="2" y="2" rx="40" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+  <rect x="42" y="90" width="6" height="12" rx="3" fill="#10B981"/>
+  <rect x="54" y="80" width="6" height="32" rx="3" fill="#10B981"/>
+  <rect x="66" y="65" width="6" height="62" rx="3" fill="#06B6D4"/>
+  <rect x="78" y="55" width="6" height="82" rx="3" fill="#06B6D4"/>
+  <circle cx="96" cy="96" r="14" fill="#10B981"/>
+  <circle cx="96" cy="96" r="6" fill="#FFFFFF"/>
+  <rect x="108" y="55" width="6" height="82" rx="3" fill="#6366F1"/>
+  <rect x="120" y="65" width="6" height="62" rx="3" fill="#6366F1"/>
+  <rect x="132" y="80" width="6" height="32" rx="3" fill="#8B5CF6"/>
+  <rect x="144" y="90" width="6" height="12" rx="3" fill="#8B5CF6"/>
+</svg>
