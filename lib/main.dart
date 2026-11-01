@@ -397,6 +397,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
       'accent': Color(0xFF4F46E5),
       'border': Color(0xFF1F2937),
       'text': Colors.white,
+      'subtext': Color(0xFF94A3B8),
     },
     {
       'name': 'Clinical Light',
@@ -405,6 +406,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
       'accent': Color(0xFF0284C7),
       'border': Color(0xFFCBD5E1),
       'text': Color(0xFF0F172A),
+      'subtext': Color(0xFF475569),
     },
     {
       'name': 'Neon Emerald',
@@ -413,6 +415,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
       'accent': Color(0xFF10B981),
       'border': Color(0xFF124B39),
       'text': Colors.white,
+      'subtext': Color(0xFFA7F3D0),
     },
     {
       'name': 'Royal Indigo',
@@ -421,6 +424,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
       'accent': Color(0xFF818CF8),
       'border': Color(0xFF312E81),
       'text': Colors.white,
+      'subtext': Color(0xFFC7D2FE),
     },
   ];
 
@@ -429,6 +433,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
   Color get _themeAccent => _themeOptions[_themeIndex]['accent'] as Color;
   Color get _themeBorder => _themeOptions[_themeIndex]['border'] as Color;
   Color get _themeText => _themeOptions[_themeIndex]['text'] as Color;
+  Color get _themeSubtext => _themeOptions[_themeIndex]['subtext'] as Color;
 
   void _showThemeSelectionDialog() {
     showDialog(
@@ -2916,167 +2921,218 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     final bool isDesktop = MediaQuery.of(context).size.width >= 850;
+    final bool isLightMode = _themeIndex == 1;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: InkWell(
-          onTap: _showElderProfileSelector,
-          borderRadius: BorderRadius.circular(10),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(7),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF4F46E5),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.waves, color: Colors.white, size: 20),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              _activeProfile.name,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const Icon(Icons.arrow_drop_down, size: 16),
-                        ],
-                      ),
-                      Text(
-                        '📞 ${_activeProfile.phoneNumber}',
-                        style: const TextStyle(fontSize: 11, color: Color(0xFF10B981), fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+    final ThemeData currentTheme = ThemeData(
+      useMaterial3: true,
+      brightness: isLightMode ? Brightness.light : Brightness.dark,
+      scaffoldBackgroundColor: _themeBg,
+      primaryColor: _themeAccent,
+      cardColor: _themeCard,
+      cardTheme: CardThemeData(
+        color: _themeCard,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: _themeBorder),
         ),
-        actions: [
-          // Theme Switcher
-          IconButton(
-            tooltip: 'Select Theme',
-            icon: const Icon(Icons.palette_outlined, color: Color(0xFF60A5FA), size: 20),
-            onPressed: _showThemeSelectionDialog,
-          ),
-          // Decoupled App UI & Bot Languages
-          IconButton(
-            tooltip: 'App UI & Bot Languages',
-            icon: const Icon(Icons.translate, color: Color(0xFFA78BFA), size: 20),
-            onPressed: _showLanguageSelectionDialog,
-          ),
-          // Situation Routine Tuner
-          IconButton(
-            tooltip: 'Situation Routine',
-            icon: const Icon(Icons.tune, color: Color(0xFFFBBF24), size: 20),
-            onPressed: _showSituationSelectionDialog,
-          ),
-          // Edit Parent Phone & Location
-          IconButton(
-            tooltip: 'Edit Parent Phone & Location',
-            icon: const Icon(Icons.edit_location_alt_outlined, color: Color(0xFF10B981), size: 20),
-            onPressed: _showEditParentModal,
-          ),
-          // Privacy Shield Badge
-          ActionChip(
-            avatar: const Icon(Icons.verified_user, color: Color(0xFF10B981), size: 14),
-            label: const Text('RAM Only', style: TextStyle(fontSize: 10.5, color: Color(0xFF10B981), fontWeight: FontWeight.bold)),
-            backgroundColor: const Color(0xFF10B981).withValues(alpha: 0.12),
-            side: BorderSide.none,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            onPressed: _showPrivacyAuditModal,
-          ),
-          const SizedBox(width: 4),
-          // Export Clinical Summary for Doctor
-          IconButton(
-            tooltip: 'Export Clinical Summary for Doctor',
-            icon: const Icon(Icons.description_outlined, color: Color(0xFF10B981), size: 20),
-            onPressed: _showClinicalSummaryDialog,
-          ),
-          // Notifications Bell
-          IconButton(
-            tooltip: 'Audit Log',
-            icon: Badge(
-              isLabelVisible: _notifications.isNotEmpty,
-              label: Text('${_notifications.length}'),
-              child: const Icon(Icons.notifications_outlined, size: 20),
-            ),
-            onPressed: _showNotificationsModal,
-          ),
-          const SizedBox(width: 4),
-        ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF10B981),
-        foregroundColor: Colors.black,
-        icon: const Icon(Icons.phone_in_talk),
-        label: const Text('Call Parent', style: TextStyle(fontWeight: FontWeight.bold)),
-        tooltip: 'Trigger Call Flow (Son Call or AI Bot Inspection)',
-        onPressed: () => _triggerCallFlow(_activeProfile.phoneNumber),
+      appBarTheme: AppBarTheme(
+        backgroundColor: _themeCard,
+        foregroundColor: _themeText,
+        elevation: 0,
       ),
-      body: SafeArea(
-        child: Row(
-          children: [
-            if (isDesktop)
-              NavigationRail(
-                backgroundColor: const Color(0xFF111827),
-                selectedIndex: _selectedIndex,
-                onDestinationSelected: (idx) => setState(() => _selectedIndex = idx),
-                labelType: NavigationRailLabelType.all,
-                destinations: const [
-                  NavigationRailDestination(
-                    icon: Icon(Icons.monitor_heart_outlined),
-                    selectedIcon: Icon(Icons.monitor_heart),
-                    label: Text('Vitality DSP'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.medication_outlined),
-                    selectedIcon: Icon(Icons.medication),
-                    label: Text('Adherence'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.shield_outlined),
-                    selectedIcon: Icon(Icons.shield),
-                    label: Text('Safety SOS'),
-                  ),
-                ],
-              ),
-            Expanded(
-              child: IndexedStack(
-                index: _selectedIndex,
+      colorScheme: ColorScheme(
+        brightness: isLightMode ? Brightness.light : Brightness.dark,
+        primary: _themeAccent,
+        onPrimary: isLightMode ? Colors.white : Colors.black,
+        secondary: _themeAccent,
+        onSecondary: Colors.white,
+        error: const Color(0xFFEF4444),
+        onError: Colors.white,
+        surface: _themeCard,
+        onSurface: _themeText,
+      ),
+    );
+
+    return Theme(
+      data: currentTheme,
+      child: Scaffold(
+        backgroundColor: _themeBg,
+        appBar: AppBar(
+          backgroundColor: _themeCard,
+          foregroundColor: _themeText,
+          elevation: 0,
+          title: InkWell(
+            onTap: _showElderProfileSelector,
+            borderRadius: BorderRadius.circular(10),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+              child: Row(
                 children: [
-                  _buildVitalityTab(isDesktop),
-                  _buildMedicationTab(),
-                  _buildSafetyTab(),
+                  Container(
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                      color: _themeAccent,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.waves, color: Colors.white, size: 20),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                _activeProfile.name,
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: _themeText),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Icon(Icons.arrow_drop_down, size: 16, color: _themeText),
+                          ],
+                        ),
+                        Text(
+                          '📞 ${_activeProfile.phoneNumber}',
+                          style: const TextStyle(fontSize: 11, color: Color(0xFF10B981), fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
+          ),
+          actions: [
+            // Theme Switcher
+            IconButton(
+              tooltip: 'Select Theme (${_themeOptions[_themeIndex]['name']})',
+              icon: Icon(Icons.palette_outlined, color: _themeAccent, size: 20),
+              onPressed: _showThemeSelectionDialog,
+            ),
+            // Decoupled App UI & Bot Languages
+            IconButton(
+              tooltip: 'App UI & Bot Languages',
+              icon: Icon(Icons.translate, color: _themeText, size: 20),
+              onPressed: _showLanguageSelectionDialog,
+            ),
+            // Elder Switcher Dropdown
+            IconButton(
+              tooltip: 'Switch Elder Profile',
+              icon: Icon(Icons.people_alt_outlined, color: _themeText, size: 20),
+              onPressed: _showElderProfileSelector,
+            ),
+            // Health Condition & Routine Tuner
+            IconButton(
+              tooltip: 'Situation Routine',
+              icon: const Icon(Icons.tune, color: Color(0xFFFBBF24), size: 20),
+              onPressed: _showSituationSelectionDialog,
+            ),
+            // Edit Parent Phone & Location
+            IconButton(
+              tooltip: 'Edit Parent Phone & Location',
+              icon: const Icon(Icons.edit_location_alt_outlined, color: Color(0xFF10B981), size: 20),
+              onPressed: _showEditParentModal,
+            ),
+            // Privacy Shield Badge
+            ActionChip(
+              avatar: const Icon(Icons.verified_user, color: Color(0xFF10B981), size: 14),
+              label: const Text('RAM Only', style: TextStyle(fontSize: 10.5, color: Color(0xFF10B981), fontWeight: FontWeight.bold)),
+              backgroundColor: const Color(0xFF10B981).withValues(alpha: 0.12),
+              side: BorderSide.none,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              onPressed: _showPrivacyAuditModal,
+            ),
+            const SizedBox(width: 4),
+            // Export Clinical Summary for Doctor
+            IconButton(
+              tooltip: 'Export Clinical Summary for Doctor',
+              icon: const Icon(Icons.description_outlined, color: Color(0xFF10B981), size: 20),
+              onPressed: _showClinicalSummaryDialog,
+            ),
+            // Notifications Bell
+            IconButton(
+              tooltip: 'Audit Log',
+              icon: Badge(
+                isLabelVisible: _notifications.isNotEmpty,
+                label: Text('${_notifications.length}'),
+                child: Icon(Icons.notifications_outlined, size: 20, color: _themeText),
+              ),
+              onPressed: _showNotificationsModal,
+            ),
+            const SizedBox(width: 4),
           ],
         ),
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: const Color(0xFF10B981),
+          foregroundColor: Colors.black,
+          icon: const Icon(Icons.phone_in_talk),
+          label: const Text('Call Parent', style: TextStyle(fontWeight: FontWeight.bold)),
+          tooltip: 'Trigger Call Flow (Son Call or AI Bot Inspection)',
+          onPressed: () => _triggerCallFlow(_activeProfile.phoneNumber),
+        ),
+        body: SafeArea(
+          child: Row(
+            children: [
+              if (isDesktop)
+                NavigationRail(
+                  backgroundColor: _themeCard,
+                  selectedIndex: _selectedIndex,
+                  onDestinationSelected: (idx) => setState(() => _selectedIndex = idx),
+                  labelType: NavigationRailLabelType.all,
+                  selectedIconTheme: IconThemeData(color: _themeAccent),
+                  selectedLabelTextStyle: TextStyle(color: _themeAccent, fontWeight: FontWeight.bold),
+                  unselectedIconTheme: IconThemeData(color: _themeSubtext),
+                  unselectedLabelTextStyle: TextStyle(color: _themeSubtext),
+                  destinations: const [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.monitor_heart_outlined),
+                      selectedIcon: Icon(Icons.monitor_heart),
+                      label: Text('Vitality DSP'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.medication_outlined),
+                      selectedIcon: Icon(Icons.medication),
+                      label: Text('Adherence'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.shield_outlined),
+                      selectedIcon: Icon(Icons.shield),
+                      label: Text('Safety SOS'),
+                    ),
+                  ],
+                ),
+              Expanded(
+                child: IndexedStack(
+                  index: _selectedIndex,
+                  children: [
+                    _buildVitalityTab(isDesktop),
+                    _buildMedicationTab(),
+                    _buildSafetyTab(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: isDesktop
+            ? null
+            : NavigationBar(
+                backgroundColor: _themeCard,
+                indicatorColor: _themeAccent.withValues(alpha: 0.25),
+                selectedIndex: _selectedIndex,
+                onDestinationSelected: (idx) => setState(() => _selectedIndex = idx),
+                destinations: const [
+                  NavigationDestination(icon: Icon(Icons.monitor_heart), label: 'Vitality DSP'),
+                  NavigationDestination(icon: Icon(Icons.medication), label: 'Adherence'),
+                  NavigationDestination(icon: Icon(Icons.shield), label: 'Safety SOS'),
+                ],
+              ),
       ),
-      bottomNavigationBar: isDesktop
-          ? null
-          : NavigationBar(
-              backgroundColor: const Color(0xFF111827),
-              selectedIndex: _selectedIndex,
-              onDestinationSelected: (idx) => setState(() => _selectedIndex = idx),
-              destinations: const [
-                NavigationDestination(icon: Icon(Icons.monitor_heart), label: 'Vitality DSP'),
-                NavigationDestination(icon: Icon(Icons.medication), label: 'Adherence'),
-                NavigationDestination(icon: Icon(Icons.shield), label: 'Safety SOS'),
-              ],
-            ),
     );
   }
 
@@ -3086,10 +3142,10 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
   Widget _buildReminderHubCard(bool isDesktop) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      color: const Color(0xFF131B2E),
+      color: _themeCard,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Color(0xFF38BDF8), width: 1.2),
+        side: BorderSide(color: _themeBorder, width: 1.2),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -3130,9 +3186,9 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF1E293B),
+                color: _themeBg,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF4F46E5).withValues(alpha: 0.3)),
+                border: Border.all(color: _themeBorder),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -3155,19 +3211,19 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                       ActionChip(
                         avatar: const Icon(Icons.alarm, size: 16, color: Color(0xFF10B981)),
                         label: const Text('☕ 08:30 AM (BP Check)', style: TextStyle(fontSize: 12)),
-                        backgroundColor: const Color(0xFF0F172A),
+                        backgroundColor: _themeIndex == 1 ? const Color(0xFFE2E8F0) : const Color(0xFF0F172A),
                         onPressed: () => _setDeviceAlarm(hour: 8, minute: 30, message: 'Call Amma - Morning BP Check'),
                       ),
                       ActionChip(
                         avatar: const Icon(Icons.alarm, size: 16, color: Color(0xFF38BDF8)),
                         label: const Text('🥗 01:30 PM (Sugar Check)', style: TextStyle(fontSize: 12)),
-                        backgroundColor: const Color(0xFF0F172A),
+                        backgroundColor: _themeIndex == 1 ? const Color(0xFFE2E8F0) : const Color(0xFF0F172A),
                         onPressed: () => _setDeviceAlarm(hour: 13, minute: 30, message: 'Call Amma - Lunch Diabetes Check'),
                       ),
                       ActionChip(
                         avatar: const Icon(Icons.alarm, size: 16, color: Color(0xFFA855F7)),
                         label: const Text('🌙 08:30 PM (Dinner Check)', style: TextStyle(fontSize: 12)),
-                        backgroundColor: const Color(0xFF0F172A),
+                        backgroundColor: _themeIndex == 1 ? const Color(0xFFE2E8F0) : const Color(0xFF0F172A),
                         onPressed: () => _setDeviceAlarm(hour: 20, minute: 30, message: 'Call Amma - Night Calcium Check'),
                       ),
                     ],
@@ -3213,9 +3269,9 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF1E293B),
+                color: _themeBg,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
+                border: Border.all(color: _themeBorder),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -4134,6 +4190,11 @@ Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
   // ---------------------------------------------------------------------------
   Widget _kpiCard(String label, String value, String sub, Color color, IconData icon) {
     return Card(
+      color: _themeCard,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: _themeBorder),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Column(
@@ -4146,7 +4207,7 @@ Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
                 Flexible(
                   child: Text(
                     label,
-                    style: const TextStyle(fontSize: 12, color: Colors.white70),
+                    style: TextStyle(fontSize: 12, color: _themeSubtext),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -4159,7 +4220,7 @@ Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
             ),
             Text(
               sub,
-              style: const TextStyle(fontSize: 11, color: Colors.white54),
+              style: TextStyle(fontSize: 11, color: _themeSubtext),
               overflow: TextOverflow.ellipsis,
             ),
           ],

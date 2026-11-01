@@ -70,127 +70,207 @@
     }
 
     /* =========================================================================
-       COMPREHENSIVE LIGHT THEME & DARK OLED DUAL-ENGINE
+       COMPREHENSIVE 4-THEME ENGINE (CYBER DARK, CLINICAL LIGHT, NEON EMERALD, ROYAL INDIGO)
        ========================================================================= */
+
+    /* 1. CYBER DARK (Default Obsidian Luxury Medical) */
+    :root, [data-theme="dark"], body.dark-theme {
+      --bg-canvas: #0B0F19;
+      --bg-surface: #111827;
+      --bg-surface-elevated: #161F30;
+      --bg-glass: rgba(17, 24, 39, 0.88);
+      --bg-glass-card: rgba(22, 31, 48, 0.78);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: #4F46E5;
+      
+      --text-primary: #F9FAFB;
+      --text-secondary: #9CA3AF;
+      --text-muted: #6B7280;
+      
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --primary-glow: rgba(79, 70, 229, 0.35);
+      --shadow-glass: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-subtle);
+    }
+
+    /* 2. CLINICAL LIGHT (Crisp Sterile Hospital Day Medical) */
     [data-theme="light"], body.light-theme {
       --bg-canvas: #F4F6F9;
       --bg-surface: #FFFFFF;
       --bg-surface-elevated: #F8FAFC;
-      --bg-glass: rgba(255, 255, 255, 0.94);
-      --bg-glass-card: rgba(255, 255, 255, 0.92);
-      --border-subtle: rgba(15, 23, 42, 0.08);
-      --border-focus: #4F46E5;
+      --bg-glass: rgba(255, 255, 255, 0.96);
+      --bg-glass-card: rgba(255, 255, 255, 0.94);
+      --border-subtle: rgba(15, 23, 42, 0.09);
+      --border-focus: #0284C7;
       
       --text-primary: #0F172A;
       --text-secondary: #475569;
       --text-muted: #64748B;
       
-      --primary: #4F46E5;
-      --primary-hover: #4338CA;
-      --primary-glow: rgba(79, 70, 229, 0.20);
-      
+      --primary: #0284C7;
+      --primary-hover: #0369A1;
+      --primary-glow: rgba(2, 132, 199, 0.18);
       --shadow-glass: 0 10px 30px -10px rgba(15, 23, 42, 0.08), 0 0 0 1px var(--border-subtle);
     }
 
-    [data-theme="light"] body, body.light-theme {
-      background-color: var(--bg-canvas);
-      color: var(--text-primary);
+    /* 3. NEON EMERALD (Ayurvedic Vitality Bio-Teal) */
+    [data-theme="emerald"], body.emerald-theme {
+      --bg-canvas: #061A14;
+      --bg-surface: #0A2E23;
+      --bg-surface-elevated: #0E3D2F;
+      --bg-glass: rgba(10, 46, 35, 0.92);
+      --bg-glass-card: rgba(14, 61, 47, 0.88);
+      --border-subtle: rgba(16, 185, 129, 0.20);
+      --border-focus: #10B981;
+      
+      --text-primary: #ECFDF5;
+      --text-secondary: #A7F3D0;
+      --text-muted: #6EE7B7;
+      
+      --primary: #10B981;
+      --primary-hover: #059669;
+      --primary-glow: rgba(16, 185, 129, 0.30);
+      --shadow-glass: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-subtle);
     }
 
-    [data-theme="light"] .app-header, body.light-theme .app-header {
-      background: rgba(255, 255, 255, 0.95);
-      border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    /* 4. ROYAL INDIGO (Cognitive Midnight Neuro-Purple) */
+    [data-theme="indigo"], body.indigo-theme {
+      --bg-canvas: #0F172A;
+      --bg-surface: #1E1B4B;
+      --bg-surface-elevated: #282467;
+      --bg-glass: rgba(30, 27, 75, 0.92);
+      --bg-glass-card: rgba(40, 36, 103, 0.85);
+      --border-subtle: rgba(129, 140, 248, 0.22);
+      --border-focus: #818CF8;
+      
+      --text-primary: #EEF2FF;
+      --text-secondary: #C7D2FE;
+      --text-muted: #A5B4FC;
+      
+      --primary: #818CF8;
+      --primary-hover: #6366F1;
+      --primary-glow: rgba(129, 140, 248, 0.30);
+      --shadow-glass: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-subtle);
     }
 
-    [data-theme="light"] .app-sidebar, body.light-theme .app-sidebar {
-      background: rgba(255, 255, 255, 0.90);
-      border-right: 1px solid rgba(15, 23, 42, 0.08);
+    /* Universal Dynamic Styling for All Themes Across Every Location */
+    body[data-theme], body[class*="-theme"] {
+      background-color: var(--bg-canvas) !important;
+      color: var(--text-primary) !important;
     }
 
-    [data-theme="light"] .nav-tab-btn, body.light-theme .nav-tab-btn {
+    [data-theme] .top-header, body[class*="-theme"] .top-header {
+      background: var(--bg-glass) !important;
+      border-bottom: 1px solid var(--border-subtle) !important;
+    }
+
+    [data-theme] .sidebar-nav, body[class*="-theme"] .sidebar-nav {
+      background: var(--bg-surface) !important;
+      border-right: 1px solid var(--border-subtle) !important;
+    }
+
+    [data-theme] .nav-tab-btn, body[class*="-theme"] .nav-tab-btn {
       color: var(--text-secondary);
     }
 
-    [data-theme="light"] .nav-tab-btn:hover, body.light-theme .nav-tab-btn:hover {
-      background: rgba(79, 70, 229, 0.08);
+    [data-theme] .nav-tab-btn:hover, body[class*="-theme"] .nav-tab-btn:hover {
+      background: var(--primary-glow);
       color: var(--primary);
     }
 
-    [data-theme="light"] .nav-tab-btn.active, body.light-theme .nav-tab-btn.active {
-      background: rgba(79, 70, 229, 0.12);
+    [data-theme] .nav-tab-btn.active, body[class*="-theme"] .nav-tab-btn.active {
+      background: var(--primary-glow);
       color: var(--primary);
       font-weight: 700;
     }
 
-    [data-theme="light"] .card, body.light-theme .card,
-    [data-theme="light"] .elder-banner-card, body.light-theme .elder-banner-card,
-    [data-theme="light"] .kpi-card, body.light-theme .kpi-card,
-    [data-theme="light"] .schedule-item, body.light-theme .schedule-item,
-    [data-theme="light"] .pipeline-tier-card, body.light-theme .pipeline-tier-card,
-    [data-theme="light"] .responder-card, body.light-theme .responder-card,
-    [data-theme="light"] .modal-window, body.light-theme .modal-window,
-    [data-theme="light"] .notification-drawer, body.light-theme .notification-drawer {
-      background: #FFFFFF;
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+    [data-theme] .card, body[class*="-theme"] .card,
+    [data-theme] .elder-banner-card, body[class*="-theme"] .elder-banner-card,
+    [data-theme] .kpi-card, body[class*="-theme"] .kpi-card,
+    [data-theme] .schedule-item, body[class*="-theme"] .schedule-item,
+    [data-theme] .pipeline-tier-card, body[class*="-theme"] .pipeline-tier-card,
+    [data-theme] .responder-card, body[class*="-theme"] .responder-card,
+    [data-theme] .modal-window, body[class*="-theme"] .modal-window,
+    [data-theme] .notification-drawer, body[class*="-theme"] .notification-drawer {
+      background: var(--bg-surface) !important;
+      border: 1px solid var(--border-subtle) !important;
+      color: var(--text-primary);
     }
 
-    [data-theme="light"] .form-input, body.light-theme .form-input,
-    [data-theme="light"] .form-select, body.light-theme .form-select,
-    [data-theme="light"] .form-textarea, body.light-theme .form-textarea,
-    [data-theme="light"] .select-dropdown, body.light-theme .select-dropdown {
-      background: #FFFFFF;
-      color: #0F172A;
-      border: 1px solid #CBD5E1;
+    [data-theme] .form-input, body[class*="-theme"] .form-input,
+    [data-theme] .form-select, body[class*="-theme"] .form-select,
+    [data-theme] .form-textarea, body[class*="-theme"] .form-textarea,
+    [data-theme] .select-dropdown, body[class*="-theme"] .select-dropdown {
+      background: var(--bg-surface-elevated) !important;
+      color: var(--text-primary) !important;
+      border: 1px solid var(--border-subtle) !important;
     }
 
-    [data-theme="light"] .icon-action-btn, body.light-theme .icon-action-btn,
-    [data-theme="light"] .btn-secondary, body.light-theme .btn-secondary {
-      background: #F1F5F9;
-      color: #1E293B;
-      border: 1px solid #E2E8F0;
+    [data-theme] .icon-action-btn, body[class*="-theme"] .icon-action-btn,
+    [data-theme] .btn-secondary, body[class*="-theme"] .btn-secondary {
+      background: var(--bg-surface-elevated) !important;
+      color: var(--text-primary) !important;
+      border: 1px solid var(--border-subtle) !important;
     }
 
-    [data-theme="light"] .platform-tile, body.light-theme .platform-tile {
-      background: #F8FAFC;
-      border: 1px solid rgba(15, 23, 42, 0.08);
+    [data-theme] .platform-tile, body[class*="-theme"] .platform-tile {
+      background: var(--bg-surface-elevated) !important;
+      border: 1px solid var(--border-subtle) !important;
+      color: var(--text-primary);
     }
 
-    [data-theme="light"] .quick-parent-call-banner, body.light-theme .quick-parent-call-banner {
-      background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(124, 58, 237, 0.05));
-      border: 1px solid rgba(79, 70, 229, 0.2);
+    [data-theme] .mobile-bottom-nav, body[class*="-theme"] .mobile-bottom-nav {
+      background: var(--bg-glass) !important;
+      border-top: 1px solid var(--border-subtle) !important;
     }
 
-    [data-theme="light"] .mobile-bottom-nav, body.light-theme .mobile-bottom-nav {
-      background: rgba(255, 255, 255, 0.95);
-      border-top: 1px solid rgba(15, 23, 42, 0.08);
-    }
-
-    [data-theme="light"] .mobile-tab-btn, body.light-theme .mobile-tab-btn {
+    [data-theme] .mobile-tab-btn, body[class*="-theme"] .mobile-tab-btn {
       color: var(--text-secondary);
     }
 
-    [data-theme="light"] .mobile-tab-btn.active, body.light-theme .mobile-tab-btn.active {
+    [data-theme] .mobile-tab-btn.active, body[class*="-theme"] .mobile-tab-btn.active {
       color: var(--primary);
     }
 
-    [data-theme="light"] .country-code-tag, body.light-theme .country-code-tag {
-      background: #F1F5F9;
-      border-color: #CBD5E1;
-      color: #0F172A;
+    [data-theme] .country-code-tag, body[class*="-theme"] .country-code-tag {
+      background: var(--bg-surface-elevated) !important;
+      border-color: var(--border-subtle) !important;
+      color: var(--text-primary) !important;
     }
 
-    [data-theme="light"] .preset-pill-btn, body.light-theme .preset-pill-btn {
-      background: #F1F5F9;
-      color: #334155;
-      border-color: #E2E8F0;
+    [data-theme] .preset-pill-btn, body[class*="-theme"] .preset-pill-btn {
+      background: var(--bg-surface-elevated);
+      color: var(--text-secondary);
+      border-color: var(--border-subtle);
     }
 
-    [data-theme="light"] .preset-pill-btn.active, body.light-theme .preset-pill-btn.active {
-      background: rgba(79, 70, 229, 0.12);
+    [data-theme] .preset-pill-btn.active, body[class*="-theme"] .preset-pill-btn.active {
+      background: var(--primary-glow);
       color: var(--primary);
-      border-color: rgba(79, 70, 229, 0.35);
+      border-color: var(--primary);
+    }
+
+    /* Light Theme Contrast Enhancements */
+    [data-theme="light"] .card, body.light-theme .card,
+    [data-theme="light"] .elder-banner-card, body.light-theme .elder-banner-card,
+    [data-theme="light"] .kpi-card, body.light-theme .kpi-card,
+    [data-theme="light"] .modal-window, body.light-theme .modal-window {
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+    }
+
+    [data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3, [data-theme="light"] h4,
+    body.light-theme h1, body.light-theme h2, body.light-theme h3, body.light-theme h4,
+    [data-theme="light"] .elder-title-wrap h2, body.light-theme .elder-title-wrap h2,
+    [data-theme="light"] .card-title-group h3, body.light-theme .card-title-group h3 {
+      color: #0F172A !important;
+    }
+
+    [data-theme="light"] .elder-subtext, body.light-theme .elder-subtext {
+      color: #475569 !important;
+    }
+
+    [data-theme="light"] .canvas-container, body.light-theme .canvas-container {
+      background: #0B1120 !important; /* Preserves high-contrast phosphor oscilloscopes */
     }
 
     *, *::before, *::after {
@@ -2004,9 +2084,12 @@
           <option value="te">తెలుగు (Telugu)</option>
         </select>
 
-        <!-- Theme Toggle -->
-        <button class="icon-action-btn" id="btnThemeToggle" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+        <!-- Theme Palette Selector & Quick Cycle -->
+        <button class="icon-action-btn" id="btnThemeToggle" title="Quick Cycle Theme (Dark / Light / Emerald / Indigo)" aria-label="Quick Cycle Theme">
           <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="icon-action-btn" id="btnThemePalette" title="Choose Color Theme" aria-label="Choose Color Theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
         </button>
 
         <!-- Notification Center Bell -->
@@ -3489,6 +3572,63 @@ class SvaraPranaApp extends StatelessWidget {
       <div class="modal-footer">
         <button class="btn btn-secondary" id="btnCopyFlutterCode" data-i18n="btnCopyFlutterCode">Copy Code to Clipboard</button>
         <a class="btn btn-primary" href="main.dart" download="main.dart">Download main.dart</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: THEME PALETTE SELECTOR -->
+  <div class="modal-backdrop" id="modalThemeSelector" role="dialog" aria-modal="true">
+    <div class="modal-window" style="max-width:540px;">
+      <div class="modal-header">
+        <h3 style="display:flex; align-items:center; gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+          <span>Select App Color Theme</span>
+        </h3>
+        <button class="modal-close-btn" data-close-modal="modalThemeSelector">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:16px;">
+          Choose your visual theme. Changes apply across all tabs, cards, and dials instantly and persist on this device.
+        </p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;" id="themeGridOptions">
+          <!-- Cyber Dark -->
+          <div class="theme-card-option" data-theme-id="dark" style="cursor:pointer; border:2px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; background:#0B0F19; transition:all 0.2s ease;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+              <span style="font-weight:700; color:#F9FAFB; font-size:0.95rem;">🌙 Cyber Dark</span>
+              <span style="width:14px; height:14px; border-radius:50%; background:#4F46E5;"></span>
+            </div>
+            <div style="font-size:0.75rem; color:#9CA3AF; line-height:1.4;">Obsidian luxury medical with indigo glow.</div>
+          </div>
+          <!-- Clinical Light -->
+          <div class="theme-card-option" data-theme-id="light" style="cursor:pointer; border:2px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; background:#F8FAFC; transition:all 0.2s ease;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+              <span style="font-weight:700; color:#0F172A; font-size:0.95rem;">☀️ Clinical Light</span>
+              <span style="width:14px; height:14px; border-radius:50%; background:#0284C7;"></span>
+            </div>
+            <div style="font-size:0.75rem; color:#475569; line-height:1.4;">Crisp medical clean for high daylight clarity.</div>
+          </div>
+          <!-- Neon Emerald -->
+          <div class="theme-card-option" data-theme-id="emerald" style="cursor:pointer; border:2px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; background:#061A14; transition:all 0.2s ease;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+              <span style="font-weight:700; color:#ECFDF5; font-size:0.95rem;">🌿 Neon Emerald</span>
+              <span style="width:14px; height:14px; border-radius:50%; background:#10B981;"></span>
+            </div>
+            <div style="font-size:0.75rem; color:#A7F3D0; line-height:1.4;">Ayurvedic vitality tone with jade bio-accents.</div>
+          </div>
+          <!-- Royal Indigo -->
+          <div class="theme-card-option" data-theme-id="indigo" style="cursor:pointer; border:2px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; background:#0F172A; transition:all 0.2s ease;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+              <span style="font-weight:700; color:#EEF2FF; font-size:0.95rem;">🌌 Royal Indigo</span>
+              <span style="width:14px; height:14px; border-radius:50%; background:#818CF8;"></span>
+            </div>
+            <div style="font-size:0.75rem; color:#C7D2FE; line-height:1.4;">Midnight sapphire with cognitive neuro-purple.</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:flex-end;">
+        <button class="btn btn-secondary" data-close-modal="modalThemeSelector">Close</button>
       </div>
     </div>
   </div>
@@ -5441,24 +5581,53 @@ class SvaraPranaApp extends StatelessWidget {
 
 
       // =======================================================================
-      // THEME ENGINE: DUAL OLED DARK / CLINICAL CLEAN LIGHT MODE
+      // THEME ENGINE: 4 COLOR THEMES (CYBER DARK / CLINICAL LIGHT / NEON EMERALD / ROYAL INDIGO)
       // =======================================================================
-      function applyTheme(theme) {
-        const isLight = theme === 'light';
-        document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
-        document.body.classList.toggle('light-theme', isLight);
-        try { localStorage.setItem('svaraprana-theme', isLight ? 'light' : 'dark'); } catch (e) {}
+      const THEME_OPTIONS = [
+        { id: 'dark', name: 'Cyber Dark', color: '#4F46E5' },
+        { id: 'light', name: 'Clinical Light', color: '#0284C7' },
+        { id: 'emerald', name: 'Neon Emerald', color: '#10B981' },
+        { id: 'indigo', name: 'Royal Indigo', color: '#818CF8' }
+      ];
+
+      function applyTheme(themeId) {
+        if (!THEME_OPTIONS.some(t => t.id === themeId)) {
+          themeId = 'dark';
+        }
+        
+        document.documentElement.setAttribute('data-theme', themeId);
+        document.body.setAttribute('data-theme', themeId);
+        document.body.classList.remove('dark-theme', 'light-theme', 'emerald-theme', 'indigo-theme');
+        document.body.classList.add(themeId + '-theme');
+        
+        try { localStorage.setItem('svaraprana-theme', themeId); } catch (e) {}
 
         const themeIcon = document.getElementById('themeIcon');
+        const btnThemeToggle = document.getElementById('btnThemeToggle');
+        const themeInfo = THEME_OPTIONS.find(t => t.id === themeId) || THEME_OPTIONS[0];
+
+        if (btnThemeToggle) {
+          btnThemeToggle.setAttribute('title', `Active Theme: ${themeInfo.name} (Click to toggle)`);
+        }
+
         if (themeIcon) {
-          if (isLight) {
-            // Sun Icon for Light Mode
+          if (themeId === 'light') {
             themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+          } else if (themeId === 'emerald') {
+            themeIcon.innerHTML = '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="3" fill="#10B981"/>';
+          } else if (themeId === 'indigo') {
+            themeIcon.innerHTML = '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>';
           } else {
-            // Moon Icon for Dark Mode
             themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
           }
         }
+
+        // Highlight selected theme in modal
+        document.querySelectorAll('.theme-card-option').forEach(card => {
+          const isSelected = card.getAttribute('data-theme-id') === themeId;
+          card.style.borderColor = isSelected ? 'var(--primary)' : 'var(--border-subtle)';
+          card.style.boxShadow = isSelected ? '0 0 16px var(--primary-glow)' : 'none';
+        });
       }
 
       // Initialize theme on start
@@ -5469,12 +5638,31 @@ class SvaraPranaApp extends StatelessWidget {
       const btnThemeToggle = document.getElementById('btnThemeToggle');
       if (btnThemeToggle) {
         btnThemeToggle.addEventListener('click', () => {
-          const isCurrentlyLight = document.body.classList.contains('light-theme') || document.documentElement.getAttribute('data-theme') === 'light';
-          const newTheme = isCurrentlyLight ? 'dark' : 'light';
-          applyTheme(newTheme);
-          showToast(newTheme === 'light' ? 'Light Theme activated' : 'Dark OLED Theme activated', 'indigo');
+          const current = document.documentElement.getAttribute('data-theme') || 'dark';
+          const currentIdx = THEME_OPTIONS.findIndex(t => t.id === current);
+          const nextIdx = (currentIdx + 1) % THEME_OPTIONS.length;
+          const nextTheme = THEME_OPTIONS[nextIdx].id;
+          applyTheme(nextTheme);
+          showToast(`Theme switched to: ${THEME_OPTIONS[nextIdx].name}`, 'indigo');
         });
       }
+
+      const btnThemePalette = document.getElementById('btnThemePalette');
+      if (btnThemePalette) {
+        btnThemePalette.addEventListener('click', () => {
+          openModal('modalThemeSelector');
+        });
+      }
+
+      document.querySelectorAll('.theme-card-option').forEach(card => {
+        card.addEventListener('click', () => {
+          const themeId = card.getAttribute('data-theme-id');
+          applyTheme(themeId);
+          closeModal('modalThemeSelector');
+          const tInfo = THEME_OPTIONS.find(t => t.id === themeId);
+          showToast(`Theme activated: ${tInfo ? tInfo.name : themeId}`, 'emerald');
+        });
+      });
 
       const btnPrivacyShield = document.getElementById('btnPrivacyShield');
       if (btnPrivacyShield) {
