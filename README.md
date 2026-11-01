@@ -155,8 +155,7 @@ Every senior in India knows how to answer a ringing phone. SvaraPrana turns regu
 ```bash
 python server.py
 ```
-Open **[http://localhost:8000](http://localhost:8000)** in your browser.  
-Interactive Swagger documentation is available at **[http://localhost:8000/docs](http://localhost:8000/docs)**.
+Open **https://vercel.com/zenith-06c7/svarapraana** in your browser.
 
 ### 2. Run the Full Test Suite
 ```bash
