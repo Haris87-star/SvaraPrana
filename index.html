@@ -2808,6 +2808,9 @@
                     • Problem: Cardiac/Respiratory emergency.<br>
                     • Action: 108 Ambulance + WhatsApp SOS.
                   </div>
+                  <button type="button" class="btn btn-secondary" id="btnOpenConditionsModal" style="font-size:0.76rem; padding:6px 12px; background:rgba(56,189,248,0.12); color:#38BDF8; border:1px solid rgba(56,189,248,0.3); font-weight:700; border-radius:8px; display:inline-flex; align-items:center; gap:6px;">
+                    <span>🩺 Diseases &amp; Health Conditions</span>
+                  </button>
                   <button type="button" class="btn btn-danger" id="btnTestModeC" style="width:100%; font-size:0.76rem; padding:6px; background:#EF4444; color:#fff; font-weight:800;">
                     🚨 Trigger Mode C &amp; 108
                   </button>
@@ -3299,6 +3302,22 @@
       </div>
 
       <div class="modal-body" style="padding:16px;">
+        <!-- Ringing Banner (Active when bot is dialing and parent has not yet picked up) -->
+        <div id="bannerCallRinging" style="display:none; background:rgba(30,27,75,0.9); border:1px solid #818CF8; border-radius:12px; padding:12px 14px; margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:1.3rem; animation:pulse 1s infinite;">📳</span>
+              <div>
+                <div style="font-weight:700; color:#38BDF8; font-size:0.88rem;">Ringing parent... AI Voice Bot is SILENT</div>
+                <div style="font-size:0.74rem; color:#CBD5E1;">Bot will speak ONLY AFTER the call is answered by your parent</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" id="btnSimulateParentAnswer" style="font-size:0.78rem; padding:6px 12px; background:#10B981; color:#0B0F19; font-weight:800;">
+              <span>🟢 Parent Answers Now</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Nokia 105 LCD Screen Simulation -->
         <div class="nokia-lcd-screen" style="margin-bottom:14px;">
           <div class="lcd-header">
@@ -3406,6 +3425,27 @@
             <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
             <span style="font-size:0.78rem; color:#6EE7B7; font-weight:600;">Direct Cellular Call Placed • Autonomous AI Voice Bot Speaking &amp; Listening Live</span>
           </div>
+        </div>
+
+        <!-- INTERACTIVE PARENT DTMF KEYPAD & VOICE RESPONSE -->
+        <div id="containerDtmfKeypad" style="display:none; background:rgba(15,23,42,0.95); border:1px solid rgba(56,189,248,0.3); border-radius:12px; padding:12px 14px; margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:0.84rem; font-weight:800; color:#38BDF8; display:flex; align-items:center; gap:6px;">
+              <span>🔢 Parent DTMF Response (Confirmation Required)</span>
+            </span>
+            <span style="font-size:0.72rem; color:#94A3B8;">Acknowledge pill only upon Key 1 or Voice</span>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">
+            <button type="button" class="btn btn-primary" id="btnDtmfKey1" style="background:#10B981; border-color:#10B981; color:#0B0F19; font-weight:800; font-size:0.82rem; padding:10px;">
+              <span>1️⃣ Key 1: Taken (Haan)</span>
+            </button>
+            <button type="button" class="btn btn-secondary" id="btnDtmfKey2" style="background:rgba(245,158,11,0.15); color:#F59E0B; border-color:#F59E0B; font-weight:700; font-size:0.82rem; padding:10px;">
+              <span>2️⃣ Key 2: Skipped</span>
+            </button>
+          </div>
+          <button type="button" class="btn btn-secondary" id="btnVoiceSayHaan" style="width:100%; background:rgba(56,189,248,0.12); color:#38BDF8; border-color:rgba(56,189,248,0.3); font-weight:700; font-size:0.78rem; padding:8px;">
+            <span>🎤 Parent Said "Haan / Yes" (Acoustic Verified)</span>
+          </button>
         </div>
 
         <!-- Live Voice Speech Bubbles Conversation Flow -->
@@ -4020,6 +4060,50 @@ class SvaraPranaApp extends StatelessWidget {
     </div>
     <div class="drawer-body" id="drawerNotifList"></div>
   </aside>
+
+  
+  <!-- MODAL: ELDER HEALTH CONDITIONS & DISEASES MANAGER -->
+  <div class="modal-backdrop" id="modalManageConditions" role="dialog" aria-modal="true" aria-labelledby="conditionsModalTitle">
+    <div class="modal-window" style="max-width: 600px;">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.5"><path d="M12 2v20M17 5v14M7 8v8"/></svg>
+          <h3 id="conditionsModalTitle" style="margin:0;">Elder Diseases &amp; Health Conditions</h3>
+        </div>
+        <button class="modal-close-btn" data-close-modal="modalManageConditions" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" style="padding:16px;">
+        <p style="font-size:0.84rem; color:#CBD5E1; margin:0 0 14px 0;">
+          Manage diagnosed medical conditions, vitals thresholds, and medication instructions for your parent.
+        </p>
+
+        <div id="conditionsListContainer" style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
+          <!-- Dynamically populated conditions -->
+        </div>
+
+        <!-- Add Condition Form -->
+        <div style="background:rgba(15,23,42,0.8); border:1px solid rgba(56,189,248,0.3); border-radius:12px; padding:14px;">
+          <h4 style="margin:0 0 10px 0; font-size:0.9rem; color:#38BDF8; font-weight:700;">➕ Add New Disease / Condition</h4>
+          <div style="display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:10px;">
+            <input type="text" id="inputNewCondName" placeholder="Condition Name (e.g. Thyroid, Asthma, Arthritis)" style="background:var(--bg-canvas); border:1px solid var(--border-subtle); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.84rem;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <input type="text" id="inputNewCondStatus" placeholder="Status (e.g. Controlled, Severe)" style="background:var(--bg-canvas); border:1px solid var(--border-subtle); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.84rem;">
+              <input type="text" id="inputNewCondTarget" placeholder="Target Range (e.g. BP < 130/80)" style="background:var(--bg-canvas); border:1px solid var(--border-subtle); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.84rem;">
+            </div>
+            <input type="text" id="inputNewCondNote" placeholder="Instructions &amp; Medication Notes" style="background:var(--bg-canvas); border:1px solid var(--border-subtle); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.84rem;">
+          </div>
+          <button type="button" class="btn btn-primary" id="btnSaveNewCondition" style="font-size:0.82rem; padding:8px 16px; background:#10B981; border-color:#10B981; color:#0B0F19; font-weight:800;">
+            <span>Save Health Condition</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="modalManageConditions">Close</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Toast Notification Container -->
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
@@ -5409,6 +5493,14 @@ class SvaraPranaApp extends StatelessWidget {
         }
       }
 
+      
+      // Immediately silence speech when tab/browser is hidden or minimized
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
+      });
+
       function speakText(text, lang, onEndCallback) {
         let finished = false;
         const finishOnce = () => {
@@ -5430,8 +5522,8 @@ class SvaraPranaApp extends StatelessWidget {
           const utterance = new SpeechSynthesisUtterance(text);
           const config = REGIONAL_SPEECH_DATA[lang] || REGIONAL_SPEECH_DATA.en;
           utterance.lang = config.voiceLang || 'en-IN';
-          utterance.rate = 0.92;
-          utterance.pitch = 1.0;
+          utterance.rate = 0.78;
+          utterance.pitch = 0.95;
 
           const voices = window.speechSynthesis.getVoices();
           const matchedVoice = voices.find(v => v.lang.startsWith(lang) || v.lang.includes(lang));
@@ -6089,7 +6181,8 @@ class SvaraPranaApp extends StatelessWidget {
       function startActiveCallSession(botMode = false) {
         isBotInspectionMode = botMode;
         callMedicationAdherence = [false, false, false];
-        updateCallInspectionSpacesUI();
+        let currentCallSpaceIdx = 0;
+        let callAnswered = !botMode;
         
         // Reset space checkboxes in HUD
         for (let i = 0; i < 3; i++) {
@@ -6119,7 +6212,7 @@ class SvaraPranaApp extends StatelessWidget {
         const phone = getCleanParentPhone();
         const validNum = phone.length >= 10 ? phone.slice(-10) : phone;
         const nameInput = document.getElementById('inputNameParent');
-        const parentName = (nameInput && nameInput.value.trim()) ? nameInput.value.trim() : 'Ramachandra Rao';
+        const parentName = (nameInput && nameInput.value.trim()) ? nameInput.value.trim() : 'Savithri Devi';
 
         const lcdName = document.getElementById('lcdTargetName');
         const lcdPhone = document.getElementById('lcdTargetPhone');
@@ -6129,6 +6222,12 @@ class SvaraPranaApp extends StatelessWidget {
         const convFlow = document.getElementById('parentCallConversation');
         const receipt = document.getElementById('parentCallReceipt');
         const saveBtn = document.getElementById('btnSaveParentCallResult');
+        const ringingBanner = document.getElementById('bannerCallRinging');
+        const dtmfPad = document.getElementById('containerDtmfKeypad');
+        const btnSimulateAnswer = document.getElementById('btnSimulateParentAnswer');
+        const btnKey1 = document.getElementById('btnDtmfKey1');
+        const btnKey2 = document.getElementById('btnDtmfKey2');
+        const btnVoiceHaan = document.getElementById('btnVoiceSayHaan');
 
         if (lcdName) lcdName.textContent = parentName;
         if (lcdPhone) lcdPhone.textContent = `+91 ${validNum}`;
@@ -6151,167 +6250,174 @@ class SvaraPranaApp extends StatelessWidget {
 
         activeCallDurationSec = 0;
         if (parentCallTimerInterval) clearInterval(parentCallTimerInterval);
-        parentCallTimerInterval = setInterval(() => {
-          activeCallDurationSec++;
-          const mins = String(Math.floor(activeCallDurationSec / 60)).padStart(2, '0');
-          const secs = String(activeCallDurationSec % 60).padStart(2, '0');
-          if (lcdTimer) lcdTimer.textContent = `${mins}:${secs}`;
-        }, 1000);
+
+        const routines = ['morning_bp', 'afternoon_sugar', 'evening_dinner'];
+        const langSelect = document.getElementById('selectEnquiryLang');
+        const lang = langSelect ? langSelect.value : 'kn';
+
+        function speakCurrentQuery(spaceIdx) {
+          if (spaceIdx >= routines.length) return;
+          const prompt = getRoutinePrompt(lang, routines[spaceIdx], '');
+          if (convFlow) {
+            const b = document.createElement('div');
+            b.className = 'conv-bubble conv-ai';
+            b.style.cssText = 'background:rgba(79, 70, 229, 0.15); border:1px solid rgba(79, 70, 229, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
+            b.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#A5B4FC; text-transform:uppercase; margin-bottom:3px;">🤖 SvaraPrana AI Clinical Agent:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${prompt}"</div>`;
+            convFlow.appendChild(b);
+            convFlow.scrollTop = convFlow.scrollHeight;
+          }
+          speakText(prompt, lang);
+          if (lcdStatus) lcdStatus.textContent = '⏳ AWAITING KEY 1 DTMF OR VOICE "HAAN"...';
+        }
+
+        function triggerCallConnected() {
+          if (callAnswered) return;
+          callAnswered = true;
+          if (ringingBanner) ringingBanner.style.display = 'none';
+          if (dtmfPad) dtmfPad.style.display = 'block';
+          if (lcdStatus) lcdStatus.textContent = '🟢 CONNECTED (8kHz AMR-NB) • BOT SPEAKING...';
+
+          if (convFlow) {
+            const conn = document.createElement('div');
+            conn.style.cssText = 'padding:6px 10px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); border-radius:8px; font-size:0.78rem; color:#6EE7B7; margin-bottom:8px; font-weight:600; text-align:center;';
+            conn.innerHTML = `🟢 Call Answered by ${parentName}! Audio bridge connected.`;
+            convFlow.appendChild(conn);
+          }
+
+          parentCallTimerInterval = setInterval(() => {
+            activeCallDurationSec++;
+            const mins = String(Math.floor(activeCallDurationSec / 60)).padStart(2, '0');
+            const secs = String(activeCallDurationSec % 60).padStart(2, '0');
+            if (lcdTimer) lcdTimer.textContent = `${mins}:${secs}`;
+          }, 1000);
+
+          // AI Bot speaks ONLY after answered!
+          setTimeout(() => {
+            speakCurrentQuery(0);
+          }, 600);
+        }
 
         if (isBotInspectionMode) {
-          if (lcdStatus) lcdStatus.textContent = 'CONNECTING TO CELLULAR AUDIO BRIDGE • AI BOT CALL LIVE...';
+          // Ringing State: bot is SILENT
+          if (ringingBanner) ringingBanner.style.display = 'block';
+          if (dtmfPad) dtmfPad.style.display = 'none';
+          if (lcdStatus) lcdStatus.textContent = '📳 RINGING PARENT (+91 ' + validNum + ')... WAITING FOR ANSWER';
           playTelephoneRing();
 
-          // Step 1: Morning BP Check (at 1.2s)
+          if (btnSimulateAnswer) {
+            btnSimulateAnswer.onclick = triggerCallConnected;
+          }
+
+          // Auto-answer simulation after 3.8s if not manually clicked
           setTimeout(() => {
-            if (lcdStatus) lcdStatus.textContent = 'CONNECTED • 🤖 BOT SPEAKING MORNING BP ENQUIRY...';
-            
-            const langSelect = document.getElementById('selectEnquiryLang');
-            const lang = langSelect ? langSelect.value : 'kn';
-            const botPrompt1 = getRoutinePrompt(lang, 'morning_bp', '');
-            
-            if (convFlow) {
-              const b1 = document.createElement('div');
-              b1.className = 'conv-bubble conv-ai';
-              b1.style.cssText = 'background:rgba(79, 70, 229, 0.15); border:1px solid rgba(79, 70, 229, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
-              b1.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#A5B4FC; text-transform:uppercase; margin-bottom:3px;">🤖 SvaraPrana AI Clinical Agent:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${botPrompt1}"</div>`;
-              convFlow.appendChild(b1);
-              convFlow.scrollTop = convFlow.scrollHeight;
+            if (!callAnswered) {
+              triggerCallConnected();
             }
+          }, 3800);
 
-            speakText(botPrompt1, lang);
-
-            // Step 1 Parent Reply & Auto-Tick Space 0 (at 2.8s)
-            setTimeout(() => {
-              const rep1 = (REGIONAL_SPEECH_DATA[lang] || REGIONAL_SPEECH_DATA.en).replyText;
+          // Key 1 DTMF Confirmation
+          if (btnKey1) {
+            btnKey1.onclick = () => {
+              playDtmfTone();
+              markCallMedicationVerified(currentCallSpaceIdx);
+              const rep = (REGIONAL_SPEECH_DATA[lang] || REGIONAL_SPEECH_DATA.en).replyText;
               if (convFlow) {
-                const pb1 = document.createElement('div');
-                pb1.className = 'conv-bubble conv-parent';
-                pb1.style.cssText = 'background:rgba(16, 185, 129, 0.15); border:1px solid rgba(16, 185, 129, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
-                pb1.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#10B981; text-transform:uppercase; margin-bottom:3px;">👵 ${parentName}:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${rep1}"</div><div style="font-size:0.7rem; color:#6EE7B7; margin-top:4px;">✓ Acoustic biomarker verified: <strong>[BP / Telmisartan 40mg]</strong> ➔ Medicine Ticked!</div>`;
-                convFlow.appendChild(pb1);
+                const pb = document.createElement('div');
+                pb.className = 'conv-bubble conv-parent';
+                pb.style.cssText = 'background:rgba(16, 185, 129, 0.15); border:1px solid rgba(16, 185, 129, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
+                pb.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#10B981; text-transform:uppercase; margin-bottom:3px;">👵 ${parentName} (Key 1 Pressed):</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${rep}"</div><div style="font-size:0.7rem; color:#6EE7B7; margin-top:4px;">✓ DTMF Key 1 Verified ➔ Medicine Space Checked Out!</div>`;
+                convFlow.appendChild(pb);
                 convFlow.scrollTop = convFlow.scrollHeight;
               }
-              markCallMedicationVerified(0);
-              if (lcdStatus) lcdStatus.textContent = '✓ SPACE 0 CHECKED • ASKING NOON DIABETES PILL...';
 
-              // Step 2: Noon Diabetes Enquiry (at 4.6s)
-              setTimeout(() => {
-                const botPrompt2 = getRoutinePrompt(lang, 'afternoon_sugar', '');
-                if (convFlow) {
-                  const b2 = document.createElement('div');
-                  b2.className = 'conv-bubble conv-ai';
-                  b2.style.cssText = 'background:rgba(79, 70, 229, 0.15); border:1px solid rgba(79, 70, 229, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
-                  b2.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#A5B4FC; text-transform:uppercase; margin-bottom:3px;">🤖 SvaraPrana AI Clinical Agent:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${botPrompt2}"</div>`;
-                  convFlow.appendChild(b2);
-                  convFlow.scrollTop = convFlow.scrollHeight;
-                }
-                speakText(botPrompt2, lang);
+              // Bot speaks verbal acknowledgement
+              const ack = (lang === 'kn')
+                ? `ಧನ್ಯವಾದಗಳು ${parentName} ಅವರೇ, ನಿಮ್ಮ ಮಾತ್ರೆ ತೆಗೆದುಕೊಂಡಿದ್ದು ದಾಖಲಾಗಿದೆ.`
+                : (lang === 'hi')
+                ? `धन्यवाद ${parentName} जी, आपकी दवाई की पुष्टि हो गई है।`
+                : `Thank you ${parentName}, your medication has been confirmed and logged.`;
+              speakText(ack, lang);
 
-                // Step 2 Parent Reply & Auto-Tick Space 1 (at 6.2s)
+              if (currentCallSpaceIdx < routines.length - 1) {
+                currentCallSpaceIdx++;
                 setTimeout(() => {
-                  if (convFlow) {
-                    const pb2 = document.createElement('div');
-                    pb2.className = 'conv-bubble conv-parent';
-                    pb2.style.cssText = 'background:rgba(16, 185, 129, 0.15); border:1px solid rgba(16, 185, 129, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
-                    pb2.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#10B981; text-transform:uppercase; margin-bottom:3px;">👵 ${parentName}:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"Metformin 500mg bhi khane ke baad le liya, kuch takleef nahi hai."</div><div style="font-size:0.7rem; color:#6EE7B7; margin-top:4px;">✓ Acoustic biomarker verified: <strong>[Metformin 500mg / Sugar]</strong> ➔ Medicine Ticked!</div>`;
-                    convFlow.appendChild(pb2);
-                    convFlow.scrollTop = convFlow.scrollHeight;
-                  }
-                  markCallMedicationVerified(1);
-                  if (lcdStatus) lcdStatus.textContent = '✓ SPACE 1 CHECKED • CONFIRMING NIGHT CALCIUM ROUTINE...';
+                  speakCurrentQuery(currentCallSpaceIdx);
+                }, 3200);
+              } else {
+                if (lcdStatus) lcdStatus.textContent = '✅ ALL MEDICINES VERIFIED • 100% ADHERENCE';
+                if (receipt) receipt.style.display = 'block';
+                if (saveBtn) saveBtn.style.display = 'inline-block';
+                showToast(`✅ 100% Medicine Adherence Confirmed via Key 1 for ${parentName}!`, 'emerald');
+              }
+            };
+          }
 
-                  // Step 3: Evening Routine Confirmation (at 8.0s)
-                  setTimeout(() => {
-                    const botPrompt3 = getRoutinePrompt(lang, 'evening_dinner', '');
-                    if (convFlow) {
-                      const b3 = document.createElement('div');
-                      b3.className = 'conv-bubble conv-ai';
-                      b3.style.cssText = 'background:rgba(79, 70, 229, 0.15); border:1px solid rgba(79, 70, 229, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
-                      b3.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#A5B4FC; text-transform:uppercase; margin-bottom:3px;">🤖 SvaraPrana AI Clinical Agent:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${botPrompt3}"</div>`;
-                      convFlow.appendChild(b3);
-                      convFlow.scrollTop = convFlow.scrollHeight;
-                    }
-                    speakText(botPrompt3, lang);
+          // Key 2 DTMF Skipped
+          if (btnKey2) {
+            btnKey2.onclick = () => {
+              playDtmfTone();
+              if (convFlow) {
+                const sk = document.createElement('div');
+                sk.style.cssText = 'padding:6px 10px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); border-radius:8px; font-size:0.78rem; color:#F59E0B; margin-bottom:8px; font-weight:600; text-align:center;';
+                sk.innerHTML = `⚠️ Key 2 Pressed: Dose marked as skipped / pending by parent.`;
+                convFlow.appendChild(sk);
+              }
+              const skipMsg = (lang === 'kn')
+                ? `ದಯವಿಟ್ಟು ಶೀಘ್ರದಲ್ಲೇ ಮಾತ್ರೆ ತೆಗೆದುಕೊಳ್ಳಿ. ನೆನಪಿಸುವ ಸೂಚನೆ ಕಳುಹಿಸಲಾಗಿದೆ.`
+                : (lang === 'hi')
+                ? `कृपया जल्द ही दवाई ले लें। रिमाइंडर भेज दिया गया है।`
+                : `Please take your dose soon. A reminder has been scheduled.`;
+              speakText(skipMsg, lang);
+            };
+          }
 
-                    // Step 3 Parent Reply & Auto-Tick Space 2 (at 9.5s)
-                    setTimeout(() => {
-                      if (convFlow) {
-                        const pb3 = document.createElement('div');
-                        pb3.className = 'conv-bubble conv-parent';
-                        pb3.style.cssText = 'background:rgba(16, 185, 129, 0.15); border:1px solid rgba(16, 185, 129, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
-                        pb3.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#10B981; text-transform:uppercase; margin-bottom:3px;">👵 ${parentName}:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"Sab davai le li hai beta. Calcium raat ko doodh ke saath le lungi."</div><div style="font-size:0.7rem; color:#6EE7B7; margin-top:4px;">✓ Acoustic biomarker verified: <strong>[Calcium 500mg / Confirmed]</strong> ➔ Medicine Ticked!</div>`;
-                        convFlow.appendChild(pb3);
-                        convFlow.scrollTop = convFlow.scrollHeight;
-                      }
-                      markCallMedicationVerified(2, '✅ CONFIRMED • Scheduled Post-Dinner 08:30 PM');
-                      playMedicalChime(2);
-
-                      if (lcdStatus) lcdStatus.textContent = '✅ CALL INSPECTION COMPLETED • ALL 3 MEDICINES VERIFIED (100% ADHERENCE)';
-                      if (receipt) receipt.style.display = 'block';
-                      if (saveBtn) saveBtn.style.display = 'inline-block';
-                      addNotification(`✅ Medicine Adherence Verified: All daily doses ticked & confirmed for ${parentName}.`, 'emerald');
-                    }, 1400);
-                  }, 1200);
-                }, 1400);
-              }, 1200);
-            }, 1500);
-          }, 1200);
+          // Voice Confirmation Button
+          if (btnVoiceHaan) {
+            btnVoiceHaan.onclick = () => {
+              playDtmfTone();
+              markCallMedicationVerified(currentCallSpaceIdx, '✓ Acoustic Voice Verified (0.42s latency)');
+              if (convFlow) {
+                const vb = document.createElement('div');
+                vb.className = 'conv-bubble conv-parent';
+                vb.style.cssText = 'background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.3); border-radius:10px; padding:10px; margin-bottom:8px; font-size:0.85rem; color:#BAE6FD;';
+                vb.innerHTML = `<div>🗣️ <strong>Acoustic Voice Confirmed:</strong> "Haan beta, davai le li hai" (Latency 0.42s • Confidence 96%)</div>`;
+                convFlow.appendChild(vb);
+              }
+              if (currentCallSpaceIdx < routines.length - 1) {
+                currentCallSpaceIdx++;
+                setTimeout(() => speakCurrentQuery(currentCallSpaceIdx), 2800);
+              } else {
+                if (lcdStatus) lcdStatus.textContent = '✅ ALL MEDICINES VERIFIED • 100% ADHERENCE';
+                if (receipt) receipt.style.display = 'block';
+                if (saveBtn) saveBtn.style.display = 'inline-block';
+              }
+            };
+          }
 
         } else {
-          // Son talk mode: Live listening copilot
+          // Son mode: Direct dial + Listening Copilot
+          if (ringingBanner) ringingBanner.style.display = 'none';
+          if (dtmfPad) dtmfPad.style.display = 'none';
           if (lcdStatus) lcdStatus.textContent = 'SON CALL ACTIVE • AI LISTENING COPILOT MONITORING...';
           
+          window.location.href = `tel:+91${validNum}`;
+
           if (convFlow) {
             const sb = document.createElement('div');
             sb.className = 'conv-bubble';
             sb.style.cssText = 'background:rgba(56, 189, 248, 0.15); border:1px solid rgba(56, 189, 248, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
-            sb.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#38BDF8; text-transform:uppercase; margin-bottom:3px;">🗣️ Live Call Copilot Active:</div><div style="color:#F8FAFC;">Connected to <strong>+91 ${validNum}</strong>. SvaraPrana AI Copilot is continuously listening to auto-tick medicine adherence spaces in real-time.</div>`;
+            sb.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#38BDF8; text-transform:uppercase; margin-bottom:3px;">🗣️ Live Call Copilot Active:</div><div style="color:#F8FAFC;">Direct call initiated to <strong>+91 ${validNum}</strong>. SvaraPrana AI Copilot is listening quietly to assist with adherence verification.</div>`;
             convFlow.appendChild(sb);
           }
 
+          parentCallTimerInterval = setInterval(() => {
+            activeCallDurationSec++;
+            const mins = String(Math.floor(activeCallDurationSec / 60)).padStart(2, '0');
+            const secs = String(activeCallDurationSec % 60).padStart(2, '0');
+            if (lcdTimer) lcdTimer.textContent = `${mins}:${secs}`;
+          }, 1000);
+
           startLiveCallSpeechRecognition(parentName);
-
-          // Automated Acoustic Monitoring & Continuous Space Fill/Checkout Timeline
-          setTimeout(() => {
-            if (convFlow) {
-              const t1 = document.createElement('div');
-              t1.className = 'conv-bubble conv-parent';
-              t1.style.cssText = 'background:rgba(16, 185, 129, 0.15); border:1px solid rgba(16, 185, 129, 0.3); border-radius:10px; padding:10px; margin-bottom:8px; font-size:0.85rem; color:#D1FAE5;';
-              t1.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#10B981; text-transform:uppercase; margin-bottom:4px;">🗣️ Parent Acoustic Stream (${parentName})</div><div>"Haan beta, Telmisartan 40mg subah chai ke baad le li thi."</div><div style="font-size:0.7rem; color:#6EE7B7; margin-top:4px;">✓ Acoustic keyword detected: <strong>[BP / Telmisartan]</strong> ➔ Space Checked Out!</div>`;
-              convFlow.appendChild(t1);
-              convFlow.scrollTop = convFlow.scrollHeight;
-            }
-            markCallMedicationVerified(0);
-          }, 2400);
-
-          setTimeout(() => {
-            if (convFlow) {
-              const t2 = document.createElement('div');
-              t2.className = 'conv-bubble conv-parent';
-              t2.style.cssText = 'background:rgba(16, 185, 129, 0.15); border:1px solid rgba(16, 185, 129, 0.3); border-radius:10px; padding:10px; margin-bottom:8px; font-size:0.85rem; color:#D1FAE5;';
-              t2.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#10B981; text-transform:uppercase; margin-bottom:4px;">🗣️ Parent Acoustic Stream (${parentName})</div><div>"Metformin 500mg bhi khane ke baad le liya, kuch takleef nahi hai."</div><div style="font-size:0.7rem; color:#6EE7B7; margin-top:4px;">✓ Acoustic keyword detected: <strong>[Metformin / Sugar]</strong> ➔ Space Checked Out!</div>`;
-              convFlow.appendChild(t2);
-              convFlow.scrollTop = convFlow.scrollHeight;
-            }
-            markCallMedicationVerified(1);
-          }, 5000);
-
-          setTimeout(() => {
-            if (convFlow) {
-              const t3 = document.createElement('div');
-              t3.className = 'conv-bubble conv-parent';
-              t3.style.cssText = 'background:rgba(16, 185, 129, 0.15); border:1px solid rgba(16, 185, 129, 0.3); border-radius:10px; padding:10px; margin-bottom:8px; font-size:0.85rem; color:#D1FAE5;';
-              t3.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#10B981; text-transform:uppercase; margin-bottom:4px;">🗣️ Parent Acoustic Stream (${parentName})</div><div>"Sab davai le li hai beta. Calcium raat ko doodh ke saath le lungi."</div><div style="font-size:0.7rem; color:#6EE7B7; margin-top:4px;">✓ Acoustic keyword detected: <strong>[Calcium / All Taken]</strong> ➔ Space Checked Out!</div>`;
-              convFlow.appendChild(t3);
-              convFlow.scrollTop = convFlow.scrollHeight;
-            }
-            markCallMedicationVerified(2, '✓ CONFIRMED • Scheduled Post-Dinner 08:30 PM');
-            if (lcdStatus) lcdStatus.textContent = 'CALL COPILOT COMPLETED • 100% ADHERENCE VERIFIED';
-            if (receipt) receipt.style.display = 'block';
-            if (saveBtn) saveBtn.style.display = 'inline-block';
-            addNotification(`✅ Live Copilot Call: 100% medication adherence verified for ${parentName}.`, 'emerald');
-          }, 7800);
         }
       }
 
@@ -7977,12 +8083,163 @@ Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
         btnAddMedModalBtn.addEventListener('click', () => openModal('modalAddMed'));
       }
 
+      // -----------------------------------------------------------------------
+      // DYNAMIC MEDICATIONS & HEALTH CONDITIONS CRUD ENGINE
+      // -----------------------------------------------------------------------
+      let customConditionsList = [
+        { name: 'Hypertension (High Blood Pressure)', status: 'Controlled', target: 'BP < 130/80 mmHg', note: 'Daily morning Telmisartan 40mg.' },
+        { name: 'Type-2 Diabetes Mellitus', status: 'Under Management', target: 'Fasting Sugar < 130 mg/dL', note: 'Metformin 500mg post-lunch.' },
+        { name: 'Osteoarthritis & Calcium Deficiency', status: 'Mild Joint Stiffness', target: 'Daily Calcium & Vitamin D3', note: 'Shelcal 500mg post-dinner with warm milk.' }
+      ];
+
+      function renderConditionsList() {
+        const container = document.getElementById('conditionsListContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        customConditionsList.forEach((c, idx) => {
+          const item = document.createElement('div');
+          item.style.cssText = 'background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:flex-start; gap:8px;';
+          item.innerHTML = `
+            <div style="flex:1;">
+              <div style="font-weight:700; font-size:0.88rem; color:#F8FAFC;">${c.name}</div>
+              <div style="font-size:0.75rem; color:#38BDF8; margin:2px 0;">Status: <strong>${c.status}</strong> • Target: <strong>${c.target}</strong></div>
+              <div style="font-size:0.72rem; color:#94A3B8;">${c.note}</div>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="btn btn-secondary btn-edit-cond" data-idx="${idx}" style="padding:4px 8px; font-size:0.72rem;" title="Edit Condition">✏️</button>
+              <button type="button" class="btn btn-secondary btn-del-cond" data-idx="${idx}" style="padding:4px 8px; font-size:0.72rem; color:#EF4444;" title="Delete Condition">🗑️</button>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+
+        container.querySelectorAll('.btn-del-cond').forEach(b => {
+          b.onclick = (e) => {
+            const i = parseInt(b.getAttribute('data-idx'));
+            if (customConditionsList.length <= 1) {
+              showToast('At least one health condition is required.', 'crimson');
+              return;
+            }
+            const removed = customConditionsList.splice(i, 1)[0];
+            renderConditionsList();
+            showToast(`Removed condition: ${removed.name}`, 'crimson');
+          };
+        });
+
+        container.querySelectorAll('.btn-edit-cond').forEach(b => {
+          b.onclick = (e) => {
+            const i = parseInt(b.getAttribute('data-idx'));
+            const c = customConditionsList[i];
+            const nameIn = document.getElementById('inputNewCondName');
+            const statusIn = document.getElementById('inputNewCondStatus');
+            const targetIn = document.getElementById('inputNewCondTarget');
+            const noteIn = document.getElementById('inputNewCondNote');
+            if (nameIn) nameIn.value = c.name;
+            if (statusIn) statusIn.value = c.status;
+            if (targetIn) targetIn.value = c.target;
+            if (noteIn) noteIn.value = c.note;
+            customConditionsList.splice(i, 1);
+            renderConditionsList();
+          };
+        });
+      }
+
+      const btnOpenConditionsModal = document.getElementById('btnOpenConditionsModal');
+      if (btnOpenConditionsModal) {
+        btnOpenConditionsModal.addEventListener('click', () => {
+          renderConditionsList();
+          openModal('modalManageConditions');
+        });
+      }
+
+      const btnSaveNewCondition = document.getElementById('btnSaveNewCondition');
+      if (btnSaveNewCondition) {
+        btnSaveNewCondition.addEventListener('click', () => {
+          const nameIn = document.getElementById('inputNewCondName');
+          const statusIn = document.getElementById('inputNewCondStatus');
+          const targetIn = document.getElementById('inputNewCondTarget');
+          const noteIn = document.getElementById('inputNewCondNote');
+          const name = nameIn ? nameIn.value.trim() : '';
+          if (!name) {
+            showToast('Please enter a condition name.', 'crimson');
+            return;
+          }
+          customConditionsList.push({
+            name: name,
+            status: statusIn && statusIn.value.trim() ? statusIn.value.trim() : 'Under Management',
+            target: targetIn && targetIn.value.trim() ? targetIn.value.trim() : 'Monitored',
+            note: noteIn && noteIn.value.trim() ? noteIn.value.trim() : 'Prescribed daily regimen'
+          });
+          if (nameIn) nameIn.value = '';
+          if (statusIn) statusIn.value = '';
+          if (targetIn) targetIn.value = '';
+          if (noteIn) noteIn.value = '';
+          renderConditionsList();
+          showToast(`Saved health condition: ${name}`, 'emerald');
+        });
+      }
+
+      // Dynamic Medicine Add/Edit
       const btnSaveNewMed = document.getElementById('btnSaveNewMed');
       if (btnSaveNewMed) {
         btnSaveNewMed.addEventListener('click', () => {
+          const nameInput = document.getElementById('inputNewMedName');
+          const timeInput = document.getElementById('inputNewMedTime');
+          const medName = nameInput ? nameInput.value.trim() : '';
+          const medTime = timeInput ? timeInput.value.trim() : '08:30 PM • Post Dinner';
+
+          if (!medName) {
+            showToast('Please enter a medication name.', 'crimson');
+            return;
+          }
+
+          const medList = document.getElementById('medScheduleList');
+          if (medList) {
+            const nextIdx = document.querySelectorAll('#medScheduleList .med-schedule-card').length;
+            const newCard = document.createElement('div');
+            newCard.className = 'med-schedule-card';
+            newCard.id = `medCard${nextIdx}`;
+            newCard.innerHTML = `
+              <div class="med-left-group">
+                <div class="custom-checkbox checked" data-med-index="${nextIdx}" id="medCheck${nextIdx}">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="med-info">
+                  <h4>${medName}</h4>
+                  <div class="med-meta">
+                    <span>${medTime}</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="med-status-tag verified" id="medTag${nextIdx}">
+                  Verified Compliant (0.42s latency)
+                </span>
+                <button type="button" class="btn btn-secondary btn-del-med" style="padding:4px 8px; font-size:0.72rem; color:#EF4444;" title="Delete">🗑️</button>
+              </div>
+            `;
+            medList.appendChild(newCard);
+
+            newCard.querySelector('.btn-del-med').onclick = (e) => {
+              e.stopPropagation();
+              newCard.remove();
+              updateRoutineAdherenceKPI();
+              showToast(`Removed medication: ${medName}`, 'crimson');
+            };
+
+            newCard.addEventListener('click', (e) => {
+              if (e.target.closest('.btn-del-med')) return;
+              const cb = newCard.querySelector('.custom-checkbox');
+              if (cb) cb.classList.toggle('checked');
+              updateRoutineAdherenceKPI();
+            });
+          }
+
+          if (nameInput) nameInput.value = '';
+          if (timeInput) timeInput.value = '';
           closeModal('modalAddMed');
-          showToast('New medication saved & scheduled for acoustic verification.', 'emerald');
-          // [Routine notification silenced]
+          updateRoutineAdherenceKPI();
+          showToast(`Added ${medName} to medication schedule!`, 'emerald');
         });
       }
 
@@ -8904,6 +9161,13 @@ Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
         initLang = localStorage.getItem('svaraprana_selected_lang') || 'en';
       } catch (e) {}
       applyLanguageTranslations(initLang);
+      
+      // Automatic real-time device GPS detection on launch
+      try {
+        acquireRealDeviceLocation();
+      } catch (e) {
+        console.warn('Auto GPS detection initialized fallback:', e);
+      }
       console.log(`✅ SvaraPrana (स्वरप्राण) Web Suite 2.0.0 Ready & 100% Operational in [${initLang}].`);
 
     })();

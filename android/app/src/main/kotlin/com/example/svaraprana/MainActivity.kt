@@ -38,8 +38,8 @@ class MainActivity : FlutterActivity(), TextToSpeech.OnInitListener {
         if (status == TextToSpeech.SUCCESS) {
             isTtsInitialized = true
             try {
-                textToSpeech?.setSpeechRate(0.92f)
-                textToSpeech?.setPitch(1.0f)
+                textToSpeech?.setSpeechRate(0.78f)
+                textToSpeech?.setPitch(0.95f)
             } catch (e: Exception) {}
 
             val pending = pendingSpeechText
@@ -91,13 +91,32 @@ class MainActivity : FlutterActivity(), TextToSpeech.OnInitListener {
                 }
             }
 
-            textToSpeech?.setSpeechRate(0.92f)
-            textToSpeech?.setPitch(1.0f)
+            textToSpeech?.setSpeechRate(0.78f)
+            textToSpeech?.setPitch(0.95f)
 
             val params = Bundle()
             params.putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, 1.0f)
             params.putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, android.media.AudioManager.STREAM_MUSIC)
             textToSpeech?.speak(text, TextToSpeech.QUEUE_FLUSH, params, "svaraprana_utterance_" + System.currentTimeMillis())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        try {
+            textToSpeech?.stop()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        try {
+            textToSpeech?.stop()
         } catch (e: Exception) {
             e.printStackTrace()
         }

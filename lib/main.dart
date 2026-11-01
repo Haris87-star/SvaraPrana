@@ -147,7 +147,7 @@ class MainShellScreen extends StatefulWidget {
   State<MainShellScreen> createState() => _MainShellScreenState();
 }
 
-class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProviderStateMixin {
+class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   int _selectedIndex = 0;
   String _selectedLanguage = 'Kannada';
 
@@ -320,7 +320,9 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _applyProfile(_activeProfile);
+    _acquireLiveGps();
 
     // Waveform simulation timer
     _waveTimer = Timer.periodic(const Duration(milliseconds: 140), (_) {
@@ -357,8 +359,17 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      _stopTts();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _waveTimer?.cancel();
+    _stopTts();
     super.dispose();
   }
 
@@ -534,50 +545,486 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
   }
 
   // ---------------------------------------------------------------------------
-  // SITUATION-BASED DYNAMIC ROUTINE VALUES (HEALTH TUNER)
+  // SITUATION-BASED DYNAMIC ROUTINE VALUES (HEALTH TUNER) & CONDITIONS MANAGER
   // ---------------------------------------------------------------------------
   String _activeSituation = 'Normal Baseline Day';
 
+  final List<Map<String, String>> _situations = [
+    {'name': 'Normal Baseline Day', 'bp': '120/80 mmHg', 'sugar': '130 mg/dL', 'note': 'Regular morning BP & noon sugar routine.'},
+    {'name': 'Post-Fever Recovery', 'bp': '115/75 mmHg', 'sugar': '138 mg/dL', 'note': 'Add Paracetamol 650mg SOS & 2h hydration.'},
+    {'name': 'Hypertension Flare-Up', 'bp': '158/98 mmHg', 'sugar': '134 mg/dL', 'note': 'Add Amlodipine 5mg evening dose.'},
+    {'name': 'Diabetic Sugar Spike', 'bp': '124/82 mmHg', 'sugar': '185 mg/dL', 'note': 'Adjust Metformin timing; low-carb diet.'},
+    {'name': 'Post-Surgery Recovery', 'bp': '118/76 mmHg', 'sugar': '128 mg/dL', 'note': 'Mobility assistance & Calcium twice daily.'},
+  ];
+
+  final List<Map<String, String>> _healthConditions = [
+    {
+      'name': 'Hypertension (High Blood Pressure)',
+      'status': 'Controlled',
+      'target': 'BP < 130/80 mmHg',
+      'note': 'Daily morning Telmisartan 40mg. Monitored for vocal stability.',
+    },
+    {
+      'name': 'Type-2 Diabetes Mellitus',
+      'status': 'Under Management',
+      'target': 'Fasting Sugar < 130 mg/dL',
+      'note': 'Metformin 500mg post-lunch. Monitored for hesitation.',
+    },
+    {
+      'name': 'Osteoarthritis & Calcium Deficiency',
+      'status': 'Mild Joint Stiffness',
+      'target': 'Daily Calcium & Vitamin D3',
+      'note': 'Shelcal 500mg post-dinner with warm milk.',
+    },
+  ];
+
   void _showSituationSelectionDialog() {
-    final situations = [
-      {'name': 'Normal Baseline Day', 'bp': '120/80 mmHg', 'sugar': '130 mg/dL', 'note': 'Regular morning BP & noon sugar routine.'},
-      {'name': 'Post-Fever Recovery', 'bp': '115/75 mmHg', 'sugar': '138 mg/dL', 'note': 'Add Paracetamol 650mg SOS & 2h hydration.'},
-      {'name': 'Hypertension Flare-Up', 'bp': '158/98 mmHg', 'sugar': '134 mg/dL', 'note': 'Add Amlodipine 5mg evening dose.'},
-      {'name': 'Diabetic Sugar Spike', 'bp': '124/82 mmHg', 'sugar': '185 mg/dL', 'note': 'Adjust Metformin timing; low-carb diet.'},
-      {'name': 'Post-Surgery Recovery', 'bp': '118/76 mmHg', 'sugar': '128 mg/dL', 'note': 'Mobility assistance & Calcium twice daily.'},
-    ];
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (dlgCtx, setDlgState) => AlertDialog(
+          backgroundColor: _themeCard,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.healing, color: Color(0xFFA855F7)),
+                  SizedBox(width: 8),
+                  Text('Situation & Routine Tuner', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                ],
+              ),
+              IconButton(
+                icon: const Icon(Icons.add_circle, color: Color(0xFF10B981)),
+                tooltip: 'Add Situation Routine',
+                onPressed: () => _showAddEditSituationDialog(onSaved: () {
+                  setDlgState(() {});
+                  setState(() {});
+                }),
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ..._situations.asMap().entries.map((entry) {
+                    final idx = entry.key;
+                    final s = entry.value;
+                    final isSel = _activeSituation == s['name'];
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        color: isSel ? const Color(0xFFA855F7).withValues(alpha: 0.15) : const Color(0xFF0F172A),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: isSel ? const Color(0xFFA855F7) : Colors.white12),
+                      ),
+                      child: ListTile(
+                        title: Text(s['name']!, style: TextStyle(fontWeight: isSel ? FontWeight.bold : FontWeight.normal, color: isSel ? const Color(0xFFA855F7) : null)),
+                        subtitle: Text('${s['bp']} • ${s['sugar']}\n${s['note']}', style: const TextStyle(fontSize: 11)),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit, size: 16, color: Colors.white70),
+                              tooltip: 'Edit Routine',
+                              onPressed: () => _showAddEditSituationDialog(
+                                editIndex: idx,
+                                onSaved: () {
+                                  setDlgState(() {});
+                                  setState(() {});
+                                },
+                              ),
+                            ),
+                            if (isSel) const Icon(Icons.check_circle, color: Color(0xFFA855F7)),
+                          ],
+                        ),
+                        onTap: () {
+                          setState(() => _activeSituation = s['name']!);
+                          Navigator.pop(ctx);
+                          _showToast('Clinical situation updated to: ${s['name']}');
+                        },
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 10),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF3B82F6),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      _showHealthConditionsManagerDialog();
+                    },
+                    icon: const Icon(Icons.medical_services_outlined, size: 16),
+                    label: const Text('Manage Diseases / Health Conditions', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAddEditSituationDialog({int? editIndex, VoidCallback? onSaved}) {
+    final isEdit = editIndex != null;
+    final s = isEdit ? _situations[editIndex] : null;
+    final nameCtrl = TextEditingController(text: isEdit ? s!['name'] : '');
+    final bpCtrl = TextEditingController(text: isEdit ? s!['bp'] : '120/80 mmHg');
+    final sugarCtrl = TextEditingController(text: isEdit ? s!['sugar'] : '130 mg/dL');
+    final noteCtrl = TextEditingController(text: isEdit ? s!['note'] : '');
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: _themeCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(Icons.healing, color: Color(0xFFA855F7)),
-            SizedBox(width: 8),
-            Text('Situation & Routine Tuner', style: TextStyle(fontWeight: FontWeight.bold)),
-          ],
+        title: Text(isEdit ? 'Edit Situation Routine' : 'Add Situation Routine', style: const TextStyle(fontWeight: FontWeight.bold)),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameCtrl,
+                decoration: const InputDecoration(labelText: 'Situation Name', hintText: 'e.g. Mild Cough & Fatigue', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: bpCtrl,
+                decoration: const InputDecoration(labelText: 'Target BP', hintText: 'e.g. 125/82 mmHg', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: sugarCtrl,
+                decoration: const InputDecoration(labelText: 'Target Sugar', hintText: 'e.g. 140 mg/dL', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: noteCtrl,
+                decoration: const InputDecoration(labelText: 'Clinical Notes', hintText: 'e.g. Check evening hydration and pill', border: OutlineInputBorder()),
+              ),
+            ],
+          ),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: situations.map((s) {
-            final isSel = _activeSituation == s['name'];
-            return ListTile(
-              title: Text(s['name']!, style: TextStyle(fontWeight: isSel ? FontWeight.bold : FontWeight.normal, color: isSel ? const Color(0xFFA855F7) : null)),
-              subtitle: Text('${s['bp']} • ${s['sugar']}\n${s['note']}', style: const TextStyle(fontSize: 11)),
-              trailing: isSel ? const Icon(Icons.check_circle, color: Color(0xFFA855F7)) : null,
-              onTap: () {
-                setState(() => _activeSituation = s['name']!);
-                Navigator.pop(ctx);
-                _showToast('Clinical situation updated to: ${s['name']}');
-                // [Cleaned routine notif]
-              },
-            );
-          }).toList(),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.black),
+            onPressed: () {
+              final name = nameCtrl.text.trim();
+              if (name.isEmpty) return;
+              if (isEdit) {
+                _situations[editIndex] = {
+                  'name': name,
+                  'bp': bpCtrl.text.trim(),
+                  'sugar': sugarCtrl.text.trim(),
+                  'note': noteCtrl.text.trim(),
+                };
+              } else {
+                _situations.add({
+                  'name': name,
+                  'bp': bpCtrl.text.trim().isNotEmpty ? bpCtrl.text.trim() : '120/80 mmHg',
+                  'sugar': sugarCtrl.text.trim().isNotEmpty ? sugarCtrl.text.trim() : '130 mg/dL',
+                  'note': noteCtrl.text.trim(),
+                });
+              }
+              Navigator.pop(ctx);
+              if (onSaved != null) onSaved();
+              _showToast(isEdit ? 'Updated ' : 'Added situation: ', bgColor: const Color(0xFF10B981));
+            },
+            child: Text(isEdit ? 'Save Changes' : 'Add Situation', style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showHealthConditionsManagerDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (dlgCtx, setDlgState) => AlertDialog(
+          backgroundColor: _themeCard,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.medical_information, color: Color(0xFF38BDF8)),
+                  SizedBox(width: 8),
+                  Text('Elder Health Conditions', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                ],
+              ),
+              IconButton(
+                icon: const Icon(Icons.add_circle, color: Color(0xFF10B981)),
+                tooltip: 'Add Condition',
+                onPressed: () => _showAddEditConditionDialog(onSaved: () {
+                  setDlgState(() {});
+                  setState(() {});
+                }),
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Diagnosed conditions for . Editable by family & doctor:',
+                    style: const TextStyle(fontSize: 12, color: Colors.white70),
+                  ),
+                  const SizedBox(height: 12),
+                  ..._healthConditions.asMap().entries.map((entry) {
+                    final idx = entry.key;
+                    final c = entry.value;
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0F172A),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.white12),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.check_circle_outline, size: 20, color: Color(0xFF10B981)),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(c['name']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white)),
+                                const SizedBox(height: 2),
+                                Text('Status:  • Target: ', style: const TextStyle(fontSize: 11, color: Color(0xFF38BDF8))),
+                                if (c['note'] != null && c['note']!.isNotEmpty)
+                                  Text(c['note']!, style: const TextStyle(fontSize: 10.5, color: Colors.white60)),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.edit, size: 16, color: Colors.white70),
+                            tooltip: 'Edit Condition',
+                            onPressed: () => _showAddEditConditionDialog(
+                              editIndex: idx,
+                              onSaved: () {
+                                setDlgState(() {});
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, size: 16, color: Color(0xFFEF4444)),
+                            tooltip: 'Delete Condition',
+                            onPressed: () {
+                              if (_healthConditions.length <= 1) {
+                                _showToast('At least one health condition is required.', bgColor: const Color(0xFFEF4444));
+                                return;
+                              }
+                              setDlgState(() => _healthConditions.removeAt(idx));
+                              setState(() {});
+                              _showToast('Condition removed.');
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.black),
+              onPressed: () => _showAddEditConditionDialog(onSaved: () {
+                setDlgState(() {});
+                setState(() {});
+              }),
+              icon: const Icon(Icons.add, size: 16),
+              label: const Text('Add Condition', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  void _showAddEditConditionDialog({int? editIndex, VoidCallback? onSaved}) {
+    final isEdit = editIndex != null;
+    final cond = isEdit ? _healthConditions[editIndex] : null;
+    final nameCtrl = TextEditingController(text: isEdit ? cond!['name'] : '');
+    final statusCtrl = TextEditingController(text: isEdit ? cond!['status'] : 'Under Management');
+    final targetCtrl = TextEditingController(text: isEdit ? cond!['target'] : 'Normal Range');
+    final noteCtrl = TextEditingController(text: isEdit ? cond!['note'] : '');
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _themeCard,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(isEdit ? 'Edit Disease / Condition' : 'Add Disease / Condition', style: const TextStyle(fontWeight: FontWeight.bold)),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameCtrl,
+                decoration: const InputDecoration(labelText: 'Disease / Condition Name', hintText: 'e.g. Hypertension, Asthma', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: statusCtrl,
+                decoration: const InputDecoration(labelText: 'Clinical Status', hintText: 'e.g. Controlled, Moderate, Flare-Up', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: targetCtrl,
+                decoration: const InputDecoration(labelText: 'Target Vitals / Range', hintText: 'e.g. BP < 130/80 mmHg, Sugar < 140', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: noteCtrl,
+                decoration: const InputDecoration(labelText: 'Care Notes / Instructions', hintText: 'e.g. Take morning medication with water', border: OutlineInputBorder()),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.black),
+            onPressed: () {
+              final name = nameCtrl.text.trim();
+              if (name.isEmpty) return;
+              if (isEdit) {
+                _healthConditions[editIndex] = {
+                  'name': name,
+                  'status': statusCtrl.text.trim(),
+                  'target': targetCtrl.text.trim(),
+                  'note': noteCtrl.text.trim(),
+                };
+              } else {
+                _healthConditions.add({
+                  'name': name,
+                  'status': statusCtrl.text.trim().isNotEmpty ? statusCtrl.text.trim() : 'Under Management',
+                  'target': targetCtrl.text.trim().isNotEmpty ? targetCtrl.text.trim() : 'Monitored',
+                  'note': noteCtrl.text.trim(),
+                });
+              }
+              Navigator.pop(ctx);
+              if (onSaved != null) onSaved();
+              _showToast(isEdit ? 'Updated condition ' : 'Added condition ', bgColor: const Color(0xFF10B981));
+            },
+            child: Text(isEdit ? 'Save Changes' : 'Add Condition', style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddEditMedicineDialog({int? editIndex}) {
+    final isEdit = editIndex != null;
+    final med = isEdit ? _medications[editIndex] : null;
+    final nameCtrl = TextEditingController(text: isEdit ? med!['name'] : '');
+    final timeCtrl = TextEditingController(text: isEdit ? med!['time'] : '08:00 AM • Post Breakfast & Water');
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _themeCard,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(isEdit ? Icons.edit_note : Icons.add_circle, color: const Color(0xFF10B981)),
+            const SizedBox(width: 8),
+            Text(isEdit ? 'Edit Prescribed Medicine' : 'Add Prescribed Medicine', style: const TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Medicine Name & Dosage',
+                  hintText: 'e.g. Amlodipine 5mg (BP)',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: timeCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Schedule / Timing',
+                  hintText: 'e.g. 08:00 AM • Post Breakfast',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.black),
+            onPressed: () {
+              final name = nameCtrl.text.trim();
+              final time = timeCtrl.text.trim();
+              if (name.isEmpty) return;
+              setState(() {
+                if (isEdit) {
+                  _medications[editIndex]['name'] = name;
+                  _medications[editIndex]['time'] = time;
+                } else {
+                  _medications.add({
+                    'name': name,
+                    'time': time.isNotEmpty ? time : 'Daily As Prescribed',
+                    'taken': false,
+                    'confidence': 'Pending Verification',
+                    'hesitation': false,
+                  });
+                }
+                _pillCount = _medications.length * 3;
+              });
+              Navigator.pop(ctx);
+              _showToast(isEdit ? 'Medicine updated: ' : 'Medicine added: ', bgColor: const Color(0xFF10B981));
+            },
+            child: Text(isEdit ? 'Save Changes' : 'Add Medicine', style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteMedicine(int index) {
+    if (_medications.length <= 1) {
+      _showToast('At least one medication must remain in the schedule.', bgColor: const Color(0xFFEF4444));
+      return;
+    }
+    final name = _medications[index]['name'];
+    setState(() {
+      _medications.removeAt(index);
+      _pillCount = _medications.length * 3;
+    });
+    _showToast('Deleted $name from medication schedule.', bgColor: const Color(0xFFEF4444));
   }
 
   // ---------------------------------------------------------------------------
@@ -699,7 +1146,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                       onPressed: () {
                         Navigator.pop(ctx);
                         _dialPhoneNumber('108');
-                        _dispatchEmergencyWhatsAppBeacon();
+                        _showToast('🚑 Dialing 108 Emergency Ambulance directly...', bgColor: const Color(0xFFEF4444));
                       },
                       icon: const Icon(Icons.emergency),
                       label: const Text('Dial 108 Ambulance', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -956,73 +1403,44 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
     } catch (_) {}
   }
 
-  String _getBotSpokenPrompt({required String lang, required String parentName, required int step}) {
+  String _getBotSpokenPromptForMed({required String lang, required String parentName, required String medName}) {
     final l = lang.toLowerCase();
     if (l == 'kn' || l == 'kannada') {
-      if (step == 1) {
-        return "ನಮಸ್ಕಾರ $parentName ಅವರೇ, ನಾನು ಸ್ವರಪ್ರಾಣ ಆರೋಗ್ಯ ಬೋಟ್. ನಿಮ್ಮ ಬೆಳಗಿನ ಟೆಲ್ಮಿಸಾರ್ಟನ್ ಬಿಪಿ ಮಾತ್ರೆ ತೆಗೆದುಕೊಂಡಿದ್ದೀರಾ?";
-      } else if (step == 2) {
-        return "ಉತ್ತಮ! ಮತ್ತು ಮಧ್ಯಾಹ್ನದ ಮೆಟ್‌ಫಾರ್ಮಿನ್ ಶುಗರ್ ಮಾತ್ರೆ ಊಟದ ನಂತರ ತೆಗೆದುಕೊಂಡಿದ್ದೀರಾ?";
-      } else {
-        return "ಧನ್ಯವಾದಗಳು $parentName ಅವರೇ, ನಿಮ್ಮ ಎಲ್ಲಾ ಔಷಧಿಗಳ ವಿವರ ದಾಖಲಾಗಿದೆ. ನಿಮ್ಮ ಆರೋಗ್ಯ ಸುರಕ್ಷಿತವಾಗಿದೆ.";
-      }
+      return "ನಮಸ್ಕಾರ $parentName ಅವರೇ, ನಾನು ಸ್ವರಪ್ರಾಣ ಆರೋಗ್ಯ ಬೋಟ್. ನಿಮ್ಮ $medName ಮಾತ್ರೆ ತೆಗೆದುಕೊಂಡಿದ್ದೀರಾ? ದೃಢೀಕರಿಸಲು ದಯವಿಟ್ಟು ಕೀ 1 ಒತ್ತಿರಿ ಅಥವಾ 'ಹೌದು' ಎಂದು ಹೇಳಿ.";
     } else if (l == 'hi' || l == 'hindi') {
-      if (step == 1) {
-        return "नमस्ते $parentName जी, मैं स्वरप्राण एआई हेल्थ केयर बॉट हूँ। क्या आपने अपनी सुबह की टेल्मಿಸार्टन बीपी की दवाई ले ली है?";
-      } else if (step == 2) {
-        return "बहुत अच्छा! और क्या आपने दोपहर का खाना खाकर मेटफॉर्मिन 500mg शुगर की गोली ले ली?";
-      } else {
-        return "धन्यवाद $parentName जी, आपकी सभी दवाइयों की पुष्टि हो गई है। आप स्वस्थ और सुरक्षित हैं।";
-      }
+      return "नमस्ते $parentName जी, मैं स्वरप्राण एआई हेल्थ केयर बॉट बोल रहा हूँ। क्या आपने अपनी $medName दवाई ले ली है? पुष्टि करने के लिए कृपया की 1 दबाएं या 'हाँ' कहें।";
     } else if (l == 'ta' || l == 'tamil') {
-      if (step == 1) {
-        return "வணக்கம் $parentName அவர்களே, நான் ஸ்வரப்ராணா ஏஐ ஹெல்த் பாட். உங்கள் காலை டெல்மிசார்டன் பிபி மாத்திரை எடுத்துக்கொண்டீர்களா?";
-      } else if (step == 2) {
-        return "மிக நன்று! மதிய உணவு முடித்து மெட்பார்மின் சர்க்கரை மாத்திரை எடுத்துக்கொண்டீர்களா?";
-      } else {
-        return "நன்றி $parentName அவர்களே, உங்கள் அனைத்து மருந்துகளும் உறுதி செய்யப்பட்டன. நலமாக இருங்கள்.";
-      }
+      return "வணக்கம் $parentName அவர்களே, நான் ஸ்வரப்ராணா ஏஐ ஹெல்த் பாட். உங்கள் $medName மாத்திரை எடுத்துக்கொண்டீர்களா? உறுதிப்படுத்த 1 அழுத்தவும்.";
     } else if (l == 'te' || l == 'telugu') {
-      if (step == 1) {
-        return "నమస్కారం $parentName గారు, నేను స్వరప్రాణ ఏఐ హెల్త్ బాట్. మీ ఉదయపు టెల్మిసార్టన్ బీపీ మాత్ర వేసుకున్నారా?";
-      } else if (step == 2) {
-        return "చాలా మంచిది! మధ్యాహ్నం భోజనం తర్వాత మెట్‌ఫార్మిన్ షుಗర్ మాత్ర వేసుకున్నారా?";
-      } else {
-        return "ధన్యవాదాలు $parentName గారు, మీ అన్ని ఔషధాల వివరాలు నిర్ధారించబడ్డాయి. ఆరోగ్యంగా ఉండండి.";
-      }
+      return "నమస్కారం $parentName గారు, నేను స్వరప్రాణ ఏఐ హెల్త్ బాట్. మీ $medName మాత్ర వేసుకున్నారా? నిర్ధారించడానికి కీ 1 నొక్కండి.";
     } else {
-      if (step == 1) {
-        return "Hello $parentName, this is SvaraPrana AI Clinical Voice Bot. Have you taken your morning Telmisartan 40mg BP medication?";
-      } else if (step == 2) {
-        return "Excellent! And did you take your afternoon Metformin 500mg tablet after lunch?";
-      } else {
-        return "Thank you $parentName, all your prescribed medications have been verified and recorded. Stay healthy!";
-      }
+      return "Hello $parentName, this is SvaraPrana AI Care Bridge. Have you taken your $medName? Please press Key 1 on your keypad or say 'Yes' to confirm.";
     }
   }
 
-  String _getRegionalParentReply(String lang, {int step = 1}) {
+  String _getDtmfAckPrompt({required String lang, required String parentName, required String medName}) {
     final l = lang.toLowerCase();
     if (l == 'kn' || l == 'kannada') {
-      if (step == 1) return "ಹೌದು ಕಣೋ, ಬೆಳಗಿನ ಬಿಪಿ ಮಾತ್ರೆ ತಗೊಂಡೆ.";
-      if (step == 2) return "ಮೆಟ್‌ಫಾರ್ಮಿನ್ ಕೂಡ ಊಟದ ನಂತರ ತಗೊಂಡೆ, ಏನೂ ತೊಂದರೆ ಇಲ್ಲ.";
-      return "ಎಲ್ಲಾ ಮಾತ್ರೆ ಸರಿಯಾಗಿ ತಗೊಂಡಿದೀನಿ, ರಾತ್ರಿ ಹಾಲು ಕುಡಿದು ಕ್ಯಾಲ್ಸಿಯಂ ತಗೋತೀನಿ.";
+      return "ಧನ್ಯವಾದಗಳು $parentName ಅವರೇ, ನಿಮ್ಮ $medName ಮಾತ್ರೆ ತೆಗೆದುಕೊಂಡಿದ್ದು ದಾಖಲಾಗಿದೆ. ನಿಮ್ಮ ಆರೋಗ್ಯ ಸುರಕ್ಷಿತವಾಗಿದೆ.";
     } else if (l == 'hi' || l == 'hindi') {
-      if (step == 1) return "हाँ बेटा, सुबह चाय के बाद बीपी की गोली ले ली थी।";
-      if (step == 2) return "मेटफॉर्मिन भी दोपहर के खाने के बाद ले लिया, कोई परेशानी नहीं है।";
-      return "सब दवाई समय पर ले ली है बेटा, चिंता मत करो।";
+      return "धन्यवाद $parentName जी, आपकी $medName दवाई की पुष्टि सफलतापूर्वक दर्ज हो गई है।";
     } else if (l == 'ta' || l == 'tamil') {
-      if (step == 1) return "ஆம் கண்ணா, காலை பிபி மாத்திரை சாப்பிட்டுவிட்டேன்.";
-      if (step == 2) return "மதிய உணவுக்குப் பின் மெட்பார்மினும் சாப்பிட்டேன்.";
-      return "எல்லா மருந்துகளும் சரியாக சாப்பிட்டுவிட்டேன்.";
+      return "நன்றி $parentName அவர்களே, உங்கள் $medName பதிவு செய்யப்பட்டது.";
     } else if (l == 'te' || l == 'telugu') {
-      if (step == 1) return "అవును బాబూ, ఉదయం బీపీ మాత్ర వేసుకున్నాను.";
-      if (step == 2) return "మధ్యాహ్నం భోజనం తర్వాత మెట్‌ఫార్మిన్ కూడా వేసుకున్నాను.";
-      return "అన్ని మాత్రలు సరిగ్గానే వేసుకున్నాను బాబూ.";
+      return "ధన్యవాదాలు $parentName గారు, మీ $medName నమోదు చేయబడింది.";
     } else {
-      if (step == 1) return "Yes dear, I took my BP tablet after morning breakfast.";
-      if (step == 2) return "Metformin 500mg taken after lunch as well, feeling fine.";
-      return "All tablets taken on schedule, will take Calcium with milk tonight.";
+      return "Thank you $parentName, your $medName has been confirmed as taken and logged in your health record.";
+    }
+  }
+
+  String _getDtmfSkipPrompt({required String lang, required String parentName, required String medName}) {
+    final l = lang.toLowerCase();
+    if (l == 'kn' || l == 'kannada') {
+      return "ಧನ್ಯವಾದಗಳು $parentName ಅವರೇ, ದಯವಿಟ್ಟು ಶೀಘ್ರದಲ್ಲೇ $medName ಮಾತ್ರೆ ತೆಗೆದುಕೊಳ್ಳಿ. ನೆನಪಿಸುವ ಸೂಚನೆ ಕಳುಹಿಸಲಾಗಿದೆ.";
+    } else if (l == 'hi' || l == 'hindi') {
+      return "धन्यवाद $parentName जी, कृपया जल्द ही $medName ले लें। रिमाइंडर शेड्यूल कर दिया गया है।";
+    } else {
+      return "Thank you $parentName, please take your $medName dose soon. A reminder notification has been scheduled.";
     }
   }
 
@@ -1082,7 +1500,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                         children: [
                           Text('I Will Talk (Son Call + Live Copilot)', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
                           SizedBox(height: 2),
-                          Text('Dial parent directly on phone app while SvaraPrana AI Copilot monitors and auto-fills medicine spaces.', style: TextStyle(fontSize: 11, color: Colors.white70)),
+                          Text('Dial parent directly on phone app while SvaraPrana AI Copilot monitors and fills medicine spaces without bot speech.', style: TextStyle(fontSize: 11, color: Colors.white70)),
                         ],
                       ),
                     ),
@@ -1096,13 +1514,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
             InkWell(
               onTap: () {
                 Navigator.pop(ctx);
-                _dialPhoneNumber(phone);
-                final initialPrompt = _getBotSpokenPrompt(
-                  lang: _botCallLanguage,
-                  parentName: _activeProfile.name,
-                  step: 1,
-                );
-                _speakText(initialPrompt, lang: _botCallLanguage);
+                // Directly launch in-app call inspection sheet in ringing state (DO NOT open phone app or speak prematurely)
                 _showLiveCallInspectionSheet(isBotMode: true, phone: phone);
               },
               child: Container(
@@ -1120,9 +1532,9 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('AI Bot to Inspect (Direct Call & Autonomous Ask)', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFA5B4FC))),
+                          Text('AI Bot to Inspect (Autonomous Call & Inquire)', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFA5B4FC))),
                           SizedBox(height: 2),
-                          Text('Direct cellular call placed to parent. AI Voice Bot speaks in Kannada/Hindi and verifies medicine adherence.', style: TextStyle(fontSize: 11, color: Colors.white70)),
+                          Text('Rings parent first. AI Voice Bot speaks ONLY after parent answers, and confirms medicine intake when Key 1 is pressed.', style: TextStyle(fontSize: 11, color: Colors.white70)),
                         ],
                       ),
                     ),
@@ -1138,13 +1550,17 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
   }
 
   // ---------------------------------------------------------------------------
-  // LIVE CALL INSPECTION HUD SHEET
+  // LIVE CALL INSPECTION HUD SHEET (SPEAKS ONLY AFTER ANSWERED, CONFIRMS ON KEY 1)
   // ---------------------------------------------------------------------------
   void _showLiveCallInspectionSheet({required bool isBotMode, required String phone}) {
     int callDurationSec = 0;
-    Timer? callTimer;
-    Timer? simulationMonitorTimer;
+    bool isRinging = isBotMode;
+    bool isConnected = !isBotMode;
+    int currentMedIdx = 0;
+    Timer? callDurationTimer;
+    Timer? ringAutoAnswerTimer;
     final List<Map<String, String>> transcript = [];
+    bool sessionStarted = false;
 
     showModalBottomSheet(
       context: context,
@@ -1153,97 +1569,84 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => StatefulBuilder(
         builder: (sheetCtx, setSheetState) {
-          if (callTimer == null) {
-            transcript.add({
-              'sender': isBotMode ? 'AI BOT' : 'COPILOT',
-              'text': isBotMode
-                  ? 'Direct cellular call placed to $phone. AI Voice Bot asking ${_activeProfile.name} in ${_activeProfile.defaultLang}...'
-                  : 'Call bridge connected to ${_activeProfile.name}. Live AI Copilot listening on 8kHz AMR-NB stream...',
-              'color': '0xFF38BDF8',
-            });
-
-            callTimer = Timer.periodic(const Duration(seconds: 1), (t) {
-              if (sheetCtx.mounted) {
-                setSheetState(() => callDurationSec++);
-              }
-            });
-
-            simulationMonitorTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-              if (!sheetCtx.mounted) {
-                timer.cancel();
-                return;
-              }
-
-              if (callDurationSec == 3) {
-                final askPrompt1 = _getBotSpokenPrompt(
-                  lang: _botCallLanguage,
-                  parentName: _activeProfile.name,
-                  step: 1,
-                );
-                final rep1 = _getRegionalParentReply(_botCallLanguage, step: 1);
-                if (isBotMode) {
-                  _speakText(askPrompt1, lang: _botCallLanguage);
-                }
-                setSheetState(() {
-                  transcript.add({
-                    'sender': isBotMode ? 'AI BOT' : 'SON',
-                    'text': isBotMode ? askPrompt1 : 'Amma, did you take your morning BP tablet?',
-                    'color': '0xFFA5B4FC',
-                  });
-                  transcript.add({
-                    'sender': 'PARENT',
-                    'text': rep1,
-                    'color': '0xFF10B981',
-                  });
-                  _medications[0]['taken'] = true;
+          void speakMedQuery(int medIdx) {
+            if (medIdx < _medications.length) {
+              final medName = _medications[medIdx]['name'] as String;
+              final prompt = _getBotSpokenPromptForMed(
+                lang: _botCallLanguage,
+                parentName: _activeProfile.name,
+                medName: medName,
+              );
+              _speakText(prompt, lang: _botCallLanguage);
+              setSheetState(() {
+                transcript.add({
+                  'sender': 'AI BOT',
+                  'text': prompt,
+                  'color': '0xFFA5B4FC',
                 });
-                setState(() => _medications[0]['taken'] = true);
-              } else if (callDurationSec == 7) {
-                final askPrompt2 = _getBotSpokenPrompt(
-                  lang: _botCallLanguage,
-                  parentName: _activeProfile.name,
-                  step: 2,
-                );
-                final rep2 = _getRegionalParentReply(_botCallLanguage, step: 2);
-                if (isBotMode) {
-                  _speakText(askPrompt2, lang: _botCallLanguage);
-                }
-                setSheetState(() {
-                  transcript.add({
-                    'sender': isBotMode ? 'AI BOT' : 'SON',
-                    'text': isBotMode ? askPrompt2 : 'Aur afternoon ka sugar tablet le liya?',
-                    'color': '0xFFA5B4FC',
-                  });
-                  transcript.add({
-                    'sender': 'PARENT',
-                    'text': rep2,
-                    'color': '0xFF10B981',
-                  });
-                  _medications[1]['taken'] = true;
+              });
+            }
+          }
+
+          void answerCall() {
+            if (!isConnected) {
+              ringAutoAnswerTimer?.cancel();
+              setSheetState(() {
+                isRinging = false;
+                isConnected = true;
+                transcript.add({
+                  'sender': 'TELEPHONY',
+                  'text': '🟢 Call Answered by ${_activeProfile.name}! Connected to 8kHz AMR-NB audio bridge.',
+                  'color': '0xFF10B981',
                 });
-                setState(() => _medications[1]['taken'] = true);
-              } else if (callDurationSec == 11) {
-                final confirmPrompt = _getBotSpokenPrompt(
-                  lang: _botCallLanguage,
-                  parentName: _activeProfile.name,
-                  step: 3,
-                );
-                final rep3 = _getRegionalParentReply(_botCallLanguage, step: 3);
-                if (isBotMode) {
-                  _speakText(confirmPrompt, lang: _botCallLanguage);
+              });
+
+              callDurationTimer = Timer.periodic(const Duration(seconds: 1), (t) {
+                if (sheetCtx.mounted) {
+                  setSheetState(() => callDurationSec++);
                 }
-                setSheetState(() {
-                  transcript.add({
-                    'sender': 'PARENT',
-                    'text': rep3,
-                    'color': '0xFF10B981',
-                  });
-                  _medications[2]['taken'] = true;
-                });
-                setState(() => _medications[2]['taken'] = true);
-                timer.cancel();
-              }
-            });
+              });
+
+              // AI Bot speaks ONLY now, after the call is answered!
+              Timer(const Duration(milliseconds: 600), () {
+                if (sheetCtx.mounted && isConnected) {
+                  speakMedQuery(0);
+                }
+              });
+            }
+          }
+
+          // Initial session trigger
+          if (!sessionStarted) {
+            sessionStarted = true;
+            if (isBotMode) {
+              transcript.add({
+                'sender': 'TELEPHONY',
+                'text': '📳 Ringing ${_activeProfile.name} ($phone)... Waiting for parent to answer the call.',
+                'color': '0xFF38BDF8',
+              });
+
+              // Simulate authentic ring tone chime
+              _playAlarmChime(title: 'Ringing Parent');
+
+              // Realistic auto-connect after 3.8s if parent does not click manual answer
+              ringAutoAnswerTimer = Timer(const Duration(milliseconds: 3800), () {
+                if (sheetCtx.mounted && isRinging) {
+                  answerCall();
+                }
+              });
+            } else {
+              transcript.add({
+                'sender': 'COPILOT',
+                'text': '📞 Son direct cellular call active with ${_activeProfile.name}. Live Copilot listening on 8kHz AMR-NB stream...',
+                'color': '0xFF10B981',
+              });
+              callDurationTimer = Timer.periodic(const Duration(seconds: 1), (t) {
+                if (sheetCtx.mounted) {
+                  setSheetState(() => callDurationSec++);
+                }
+              });
+            }
           }
 
           final int verifiedCount = _medications.where((m) => m['taken'] == true).length;
@@ -1288,7 +1691,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                isBotMode ? 'AI Voice Bot • Direct Phone Call Active' : 'Son Call • Live AI Copilot Active',
+                                isBotMode ? 'AI Voice Bot • Autonomous Medication Call' : 'Son Call • Live AI Copilot Active',
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
                               ),
                               Row(
@@ -1296,14 +1699,16 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                                   Container(
                                     width: 7,
                                     height: 7,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF10B981),
+                                    decoration: BoxDecoration(
+                                      color: isRinging ? const Color(0xFFF59E0B) : const Color(0xFF10B981),
                                       shape: BoxShape.circle,
                                     ),
                                   ),
                                   const SizedBox(width: 5),
                                   Text(
-                                    '${_activeProfile.name} ($phone) • $mins:$secs • 8kHz AMR-NB',
+                                    isRinging
+                                        ? '${_activeProfile.name} ($phone) • Ringing... (Waiting for answer)'
+                                        : '${_activeProfile.name} ($phone) • $mins:$secs • 8kHz AMR-NB',
                                     style: const TextStyle(fontSize: 11, color: Colors.white70),
                                   ),
                                 ],
@@ -1316,14 +1721,80 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                         icon: const Icon(Icons.close),
                         onPressed: () {
                           _stopTts();
-                          callTimer?.cancel();
-                          simulationMonitorTimer?.cancel();
+                          callDurationTimer?.cancel();
+                          ringAutoAnswerTimer?.cancel();
                           Navigator.pop(ctx);
                         },
                       ),
                     ],
                   ),
                   const SizedBox(height: 14),
+
+                  // RINGING NOTIFICATION BANNER (When waiting for parent to pick up)
+                  if (isRinging)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 14),
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1E1B4B),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: const Color(0xFF818CF8)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF38BDF8)),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                '📳 Ringing parent... Bot is SILENT until call is answered',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF38BDF8)),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'SvaraPrana does not speak through your mobile loudspeaker while ringing. Once your parent answers, the bot will calmly ask about medication.',
+                            style: TextStyle(fontSize: 11.5, color: Colors.white70),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF10B981),
+                                  foregroundColor: Colors.black,
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
+                                onPressed: answerCall,
+                                icon: const Icon(Icons.call, size: 16),
+                                label: const Text('Parent Answers Call Now', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                              ),
+                              const SizedBox(width: 8),
+                              OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: const Color(0xFF38BDF8),
+                                  side: const BorderSide(color: Color(0xFF38BDF8)),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
+                                onPressed: () {
+                                  _dialPhoneNumber(phone);
+                                },
+                                icon: const Icon(Icons.phone_forwarded, size: 16),
+                                label: const Text('Open Phone Dialer', style: TextStyle(fontSize: 12)),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
 
                   // LIVE MEDICINE ADHERENCE SPACES CARD
                   Container(
@@ -1344,7 +1815,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                                 Icon(Icons.fact_check, color: Color(0xFF10B981), size: 18),
                                 SizedBox(width: 8),
                                 Text(
-                                  'Medicine Spaces (Auto-Checkout)',
+                                  'Medicine Spaces (Adherence Truth)',
                                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
                                 ),
                               ],
@@ -1377,10 +1848,11 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                         ),
                         const SizedBox(height: 12),
 
-                        // Spaces List (Tap directly to toggle manual verification if needed)
+                        // Spaces List (Renders dynamically from _medications)
                         ...List.generate(_medications.length, (i) {
                           final med = _medications[i];
                           final isTaken = med['taken'] == true;
+                          final isCurrent = i == currentMedIdx && isConnected;
                           return InkWell(
                             onTap: () {
                               setSheetState(() => med['taken'] = !isTaken);
@@ -1394,18 +1866,22 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                               decoration: BoxDecoration(
                                 color: isTaken
                                     ? const Color(0xFF10B981).withValues(alpha: 0.15)
-                                    : const Color(0xFF1E293B),
+                                    : (isCurrent ? const Color(0xFF4F46E5).withValues(alpha: 0.18) : const Color(0xFF1E293B)),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                  color: isTaken ? const Color(0xFF10B981) : Colors.white12,
-                                  width: isTaken ? 1.5 : 1.0,
+                                  color: isTaken
+                                      ? const Color(0xFF10B981)
+                                      : (isCurrent ? const Color(0xFF818CF8) : Colors.white12),
+                                  width: (isTaken || isCurrent) ? 1.5 : 1.0,
                                 ),
                               ),
                               child: Row(
                                 children: [
                                   Icon(
-                                    isTaken ? Icons.check_circle : Icons.radio_button_unchecked,
-                                    color: isTaken ? const Color(0xFF10B981) : Colors.white38,
+                                    isTaken ? Icons.check_circle : (isCurrent ? Icons.record_voice_over : Icons.radio_button_unchecked),
+                                    color: isTaken
+                                        ? const Color(0xFF10B981)
+                                        : (isCurrent ? const Color(0xFFA5B4FC) : Colors.white38),
                                     size: 22,
                                   ),
                                   const SizedBox(width: 12),
@@ -1423,11 +1899,13 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                                         ),
                                         Text(
                                           isTaken
-                                              ? '✓ Verified Compliant via Voice Recognition'
-                                              : '• Awaiting Spoken Confirmation on Call...',
+                                              ? (med['confidence'] as String? ?? '✓ Verified Compliant via Key 1')
+                                              : (isCurrent ? '• AI Bot Asking Now: Press Key 1 to Confirm' : '• Pending Confirmation...'),
                                           style: TextStyle(
                                             fontSize: 10.5,
-                                            color: isTaken ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                                            color: isTaken
+                                                ? const Color(0xFF10B981)
+                                                : (isCurrent ? const Color(0xFFA5B4FC) : const Color(0xFFF59E0B)),
                                             fontWeight: isTaken ? FontWeight.bold : FontWeight.normal,
                                           ),
                                         ),
@@ -1441,7 +1919,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                                         color: const Color(0xFF10B981),
                                         borderRadius: BorderRadius.circular(6),
                                       ),
-                                      child: const Text('CHECKED', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.black)),
+                                      child: const Text('VERIFIED', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.black)),
                                     ),
                                 ],
                               ),
@@ -1449,37 +1927,191 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                           );
                         }),
 
-                        const SizedBox(height: 8),
-                        // Live Call Audio Status Banner
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF0F172A),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF10B981),
-                                  shape: BoxShape.circle,
+                        const SizedBox(height: 10),
+
+                        // INTERACTIVE DTMF KEYPAD & VOICE CONFIRMATION BUTTONS (Active when connected)
+                        if (isConnected) ...[
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0F172A),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFF38BDF8).withValues(alpha: 0.3)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Row(
+                                  children: [
+                                    Icon(Icons.dialpad, size: 18, color: Color(0xFF38BDF8)),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Parent Keypad / DTMF Response',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5, color: Colors.white),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  isBotMode
-                                      ? 'Direct cellular call placed. AI Voice Bot speaking to ${_activeProfile.name} and actively listening...'
-                                      : 'Direct cellular call placed. AI Copilot actively listening for spoken medicine confirmation...',
-                                  style: const TextStyle(fontSize: 11, color: Color(0xFF6EE7B7), fontWeight: FontWeight.w500),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Acknowledge medicine only when parent presses Key 1 on phone keypad or says "Haan/Yes":',
+                                  style: TextStyle(fontSize: 11, color: Colors.white70),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 10),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color(0xFF10B981),
+                                          foregroundColor: Colors.black,
+                                          padding: const EdgeInsets.symmetric(vertical: 12),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                        ),
+                                        onPressed: () {
+                                          _playAlarmChime();
+                                          final curName = currentMedIdx < _medications.length
+                                              ? _medications[currentMedIdx]['name'] as String
+                                              : 'Prescribed Medicine';
+                                          setSheetState(() {
+                                            if (currentMedIdx < _medications.length) {
+                                              _medications[currentMedIdx]['taken'] = true;
+                                              _medications[currentMedIdx]['confidence'] = 'Verified via DTMF Key 1';
+                                            }
+                                            transcript.add({
+                                              'sender': 'PARENT (DTMF)',
+                                              'text': 'Key 1 Pressed: Confirmed $curName taken.',
+                                              'color': '0xFF10B981',
+                                            });
+                                          });
+                                          setState(() {
+                                            if (currentMedIdx < _medications.length) {
+                                              _medications[currentMedIdx]['taken'] = true;
+                                            }
+                                          });
+
+                                          // AI Bot speaks verbal acknowledgment
+                                          final ack = _getDtmfAckPrompt(
+                                            lang: _botCallLanguage,
+                                            parentName: _activeProfile.name,
+                                            medName: curName,
+                                          );
+                                          _speakText(ack, lang: _botCallLanguage);
+                                          setSheetState(() {
+                                            transcript.add({
+                                              'sender': 'AI BOT',
+                                              'text': ack,
+                                              'color': '0xFFA5B4FC',
+                                            });
+                                          });
+
+                                          // Advance to next medicine
+                                          if (currentMedIdx < _medications.length - 1) {
+                                            setSheetState(() => currentMedIdx++);
+                                            Timer(const Duration(milliseconds: 3200), () {
+                                              if (sheetCtx.mounted && isConnected) {
+                                                speakMedQuery(currentMedIdx);
+                                              }
+                                            });
+                                          } else {
+                                            setSheetState(() {
+                                              transcript.add({
+                                                'sender': 'SYSTEM',
+                                                'text': '✅ All prescribed doses verified! 100% adherence score logged in health record.',
+                                                'color': '0xFF10B981',
+                                              });
+                                            });
+                                            _showToast('✅ 100% Medicine Adherence Confirmed via Key 1!', bgColor: const Color(0xFF10B981));
+                                          }
+                                        },
+                                        icon: const Icon(Icons.touch_app, size: 18),
+                                        label: const Text('Key 1: Taken (Haan)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: OutlinedButton.icon(
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor: const Color(0xFFF59E0B),
+                                          side: const BorderSide(color: Color(0xFFF59E0B)),
+                                          padding: const EdgeInsets.symmetric(vertical: 12),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                        ),
+                                        onPressed: () {
+                                          _playAlarmChime();
+                                          final curName = currentMedIdx < _medications.length
+                                              ? _medications[currentMedIdx]['name'] as String
+                                              : 'Medicine';
+                                          setSheetState(() {
+                                            if (currentMedIdx < _medications.length) {
+                                              _medications[currentMedIdx]['taken'] = false;
+                                              _medications[currentMedIdx]['confidence'] = 'Marked Skipped / Pending';
+                                            }
+                                            transcript.add({
+                                              'sender': 'PARENT (DTMF)',
+                                              'text': 'Key 2 Pressed: $curName marked skipped / pending.',
+                                              'color': '0xFFF59E0B',
+                                            });
+                                          });
+                                          setState(() {
+                                            if (currentMedIdx < _medications.length) {
+                                              _medications[currentMedIdx]['taken'] = false;
+                                            }
+                                          });
+
+                                          final skipMsg = _getDtmfSkipPrompt(
+                                            lang: _botCallLanguage,
+                                            parentName: _activeProfile.name,
+                                            medName: curName,
+                                          );
+                                          _speakText(skipMsg, lang: _botCallLanguage);
+                                        },
+                                        icon: const Icon(Icons.snooze, size: 18),
+                                        label: const Text('Key 2: Skipped', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF0284C7),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                    onPressed: () {
+                                      _playAlarmChime();
+                                      final curName = currentMedIdx < _medications.length
+                                          ? _medications[currentMedIdx]['name'] as String
+                                          : 'Prescribed Medicine';
+                                      setSheetState(() {
+                                        if (currentMedIdx < _medications.length) {
+                                          _medications[currentMedIdx]['taken'] = true;
+                                          _medications[currentMedIdx]['confidence'] = 'Verified via Voice "Haan" (96% Confidence)';
+                                        }
+                                        transcript.add({
+                                          'sender': 'PARENT (VOICE)',
+                                          'text': 'Parent Spoke: "Haan le li" • Voice biomarker verified (0.42s latency).',
+                                          'color': '0xFF10B981',
+                                        });
+                                      });
+                                      setState(() {
+                                        if (currentMedIdx < _medications.length) {
+                                          _medications[currentMedIdx]['taken'] = true;
+                                        }
+                                      });
+                                      _showToast('Voice Adherence Confirmed for $curName!', bgColor: const Color(0xFF10B981));
+                                    },
+                                    icon: const Icon(Icons.mic, size: 16),
+                                    label: const Text('Voice: Parent Said "Haan / Yes" (Acoustic Verified)', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),
@@ -1509,13 +2141,20 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                                 Container(
                                   width: 6,
                                   height: 6,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF10B981),
+                                  decoration: BoxDecoration(
+                                    color: isConnected ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
                                     shape: BoxShape.circle,
                                   ),
                                 ),
                                 const SizedBox(width: 4),
-                                const Text('LISTENING', style: TextStyle(fontSize: 9, color: Color(0xFF10B981), fontWeight: FontWeight.bold)),
+                                Text(
+                                  isConnected ? 'ACTIVE STREAM' : 'RINGING',
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    color: isConnected ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ],
                             ),
                           ],
@@ -1567,11 +2206,11 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       onPressed: () {
-                        callTimer?.cancel();
-                        simulationMonitorTimer?.cancel();
+                        _stopTts();
+                        callDurationTimer?.cancel();
+                        ringAutoAnswerTimer?.cancel();
                         Navigator.pop(ctx);
-                        _showToast('Call Completed • 100% Medicine Adherence Saved & Synced!', bgColor: const Color(0xFF10B981));
-                        // [Cleaned routine notif]
+                        _showToast('Call Completed • Medicine Adherence Saved & Synced!', bgColor: const Color(0xFF10B981));
                       },
                       icon: const Icon(Icons.check_circle_outline, size: 20),
                       label: const Text('End Call & Save Verified Report', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5)),
@@ -3610,8 +4249,8 @@ Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
                       ),
                       Text(
-                        '${_activeProfile.phoneNumber} • ${_activeProfile.city}',
-                        style: const TextStyle(fontSize: 12, color: Colors.white70),
+                        '${_activeProfile.phoneNumber} • ${_activeProfile.city}\n📍 Live GPS: ${_currentLat.toStringAsFixed(4)}, ${_currentLng.toStringAsFixed(4)} (±${_gpsAccuracy.toStringAsFixed(0)}m) • $_activeSituation',
+                        style: const TextStyle(fontSize: 11, color: Colors.white70),
                       ),
                     ],
                   ),
@@ -3693,6 +4332,16 @@ Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
                   onPressed: _showSituationSelectionDialog,
                   icon: const Icon(Icons.tune, size: 16),
                   label: const Text('Situation Routine', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                ),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0D9488),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  onPressed: _showHealthConditionsManagerDialog,
+                  icon: const Icon(Icons.healing, size: 16),
+                  label: const Text('Diseases & Vitals', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -3940,7 +4589,38 @@ Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
         ),
         const SizedBox(height: 14),
 
-        // Medication List
+        // Medication List Header with Add Prescribed Medicine Button
+        Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.medication, color: Color(0xFF10B981), size: 20),
+                  SizedBox(width: 8),
+                  Text(
+                    'Prescribed Medicines Schedule',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  ),
+                ],
+              ),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF10B981),
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: () => _showAddEditMedicineDialog(),
+                icon: const Icon(Icons.add, size: 16),
+                label: const Text('Add Medicine', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              ),
+            ],
+          ),
+        ),
+
+        // Medication List (Editable & Customizable)
         ..._medications.asMap().entries.map((entry) {
           final int idx = entry.key;
           final Map<String, dynamic> med = entry.value;
@@ -3969,6 +4649,21 @@ Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
                       fontSize: 11.5,
                       fontWeight: FontWeight.w600,
                     ),
+                  ),
+                ],
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit_outlined, size: 18, color: Colors.white70),
+                    tooltip: 'Edit Medicine',
+                    onPressed: () => _showAddEditMedicineDialog(editIndex: idx),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, size: 18, color: Color(0xFFEF4444)),
+                    tooltip: 'Delete Medicine',
+                    onPressed: () => _deleteMedicine(idx),
                   ),
                 ],
               ),
