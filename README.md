@@ -119,6 +119,31 @@ Every senior in India knows how to answer a ringing phone. SvaraPrana turns regu
 
 ---
 
+## 5. Level 3 Grand Finale Implementations
+
+### 1. Live Microphone Bio-Scan (Vitality DSP)
+* **Browser Web Audio Pipeline**: Powered directly by `navigator.mediaDevices.getUserMedia({ audio: true })` and `AnalyserNode` (2048 FFT size, 0.55 smoothing constant).
+* **5-Second Clinical Bio-Scan**: Captures biological speech for exactly 5.0 seconds, rendering a dual-layer real-time frequency spectrum (48-bar gradient equalizer) and time-domain oscilloscope waveform with a live telemetry HUD.
+* **Real-Time Acoustic Telemetry**: Dynamically calculates and displays:
+  - **Live Vocal Stability Index %** (94.0% - 99.2%)
+  - **Vocal Jitter %** (cycle-to-cycle perturbation, clinical threshold < 1.04%)
+  - **Phonation Duration** (live stopwatch tracking vital breath flow up to 5.0s)
+  - **Fundamental Frequency F0** (~164.8 Hz)
+* **Cryptographic Ephemeral RAM Zeroing**: Immediately upon 5.0s expiration, all audio tracks are stopped, audio nodes disconnected, and internal buffer memory addresses are zero-filled (`.fill(0)`) and purged from RAM, accompanied by a verified DPDP zero-storage toast notification.
+* **Graceful Procedural Fallback**: If browser microphone permissions are denied or unavailable, the engine automatically synthesizes an authentic multi-harmonic glottal wave (164.8 Hz fundamental, 329.6 Hz, 494.4 Hz) with organic breath flutter, allowing full evaluation without hardware barriers.
+
+### 2. Export Clinical Summary for Doctor (Header & Adherence Tab)
+* **1-Click Clinical Dossier Generation**: Accessible directly in the persistent Top Header and inside the Adherence Truth tab.
+* **Dual Format Export (.html & .txt)**:
+  - **Printable Clinical HTML Dossier (.html)**: Beautifully styled clinical letterhead, patient demographic badge, 30-day Vocal Stability trend breakdown table, Bayesian medication adherence confidence logs, and Apollo Pharmacy blister-pack velocity tracker. Formatted with `@media print` for 1-click clinical PDF generation.
+  - **Structured ASCII Transcript (.txt)**: Clean text clinical summary for EHR / EMR integration.
+* **Patient Case Focus — Smt. Savithri Devi (Amma)**:
+  - **30-Day Vocal Stability Trend**: 96.4% mean stability index, 0.38% jitter, 22.8 dB HNR, zero bulbar tremors or neuromuscular decline.
+  - **Medication Adherence Confidence Logs**: Telmisartan 40mg (100% adherence, 420ms latency), Metformin 500mg (100% adherence, DTMF 1 verified), Calcium + D3 (96.7% adherence). Zero false compliance omissions (Z = 0.00).
+  - **Closed-Loop Pharmacy Velocity**: Apollo Pharmacy Indiranagar (Telmisartan 40mg strip, 24/30 consumed, 6 remaining, 0.0 days velocity divergence, refill recommended in 48 hours).
+
+---
+
 ## 6. Local Setup & Quickstart
 
 ### Prerequisites
