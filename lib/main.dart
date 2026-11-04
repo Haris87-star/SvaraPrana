@@ -1448,6 +1448,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
   // CALL TRIGGER WITH DUAL-MODE SELECTION & LIVE CHECKOUT HUD
   // ---------------------------------------------------------------------------
   void _triggerCallFlow(String phone) {
+    _stopTts();
     showModalBottomSheet(
       context: context,
       backgroundColor: _themeCard,
@@ -1465,7 +1466,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                   children: [
                     Icon(Icons.phone_in_talk, color: Color(0xFF38BDF8), size: 24),
                     SizedBox(width: 8),
-                    Text('Choose Call Inspection Mode', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                    Text('Place Call to Parent', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
@@ -1473,12 +1474,35 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
             ),
             const SizedBox(height: 6),
             Text('Calling ${_activeProfile.name} ($phone)', style: const TextStyle(fontSize: 12, color: Colors.white70)),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
+
+            // DIRECT INSTANT CELLULAR CALL
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF10B981),
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  _stopTts();
+                  _dialPhoneNumber(phone);
+                  _showLiveCallInspectionSheet(isBotMode: false, phone: phone);
+                },
+                icon: const Icon(Icons.phone, size: 20, color: Colors.black),
+                label: Text('📞 Direct Cellular Call: $phone', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5)),
+              ),
+            ),
+            const SizedBox(height: 12),
 
             // Option 1: Son Talk + Copilot
             InkWell(
               onTap: () {
                 Navigator.pop(ctx);
+                _stopTts();
                 _dialPhoneNumber(phone);
                 _showLiveCallInspectionSheet(isBotMode: false, phone: phone);
               },
@@ -1486,9 +1510,9 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                 padding: const EdgeInsets.all(14),
                 margin: const EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.4)),
+                  border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
                 ),
                 child: const Row(
                   children: [
@@ -1500,7 +1524,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                         children: [
                           Text('I Will Talk (Son Call + Live Copilot)', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
                           SizedBox(height: 2),
-                          Text('Dial parent directly on phone app while SvaraPrana AI Copilot monitors and fills medicine spaces without bot speech.', style: TextStyle(fontSize: 11, color: Colors.white70)),
+                          Text('Dials parent directly over cellular while SvaraPrana AI Copilot monitors medication spaces quietly without bot speech.', style: TextStyle(fontSize: 11, color: Colors.white70)),
                         ],
                       ),
                     ),
@@ -1510,11 +1534,11 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
               ),
             ),
 
-            // Option 2: AI Bot to Inspect
+            // Option 2: AI Bot Telephony Bridge
             InkWell(
               onTap: () {
                 Navigator.pop(ctx);
-                // Directly launch in-app call inspection sheet in ringing state (DO NOT open phone app or speak prematurely)
+                _stopTts();
                 _showLiveCallInspectionSheet(isBotMode: true, phone: phone);
               },
               child: Container(
@@ -1532,9 +1556,9 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('AI Bot to Inspect (Autonomous Call & Inquire)', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFA5B4FC))),
+                          Text('Autonomous AI Telephony Bridge', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFA5B4FC))),
                           SizedBox(height: 2),
-                          Text('Rings parent first. AI Voice Bot speaks ONLY after parent answers, and confirms medicine intake when Key 1 is pressed.', style: TextStyle(fontSize: 11, color: Colors.white70)),
+                          Text('Rings parent first. AI Voice Bot speaks ONLY to parent when answered. Caregiver mobile speaker remains silent.', style: TextStyle(fontSize: 11, color: Colors.white70)),
                         ],
                       ),
                     ),
@@ -1577,10 +1601,11 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                 parentName: _activeProfile.name,
                 medName: medName,
               );
-              _speakText(prompt, lang: _botCallLanguage);
+              // Audio streams exclusively to parent's phone over telephony bridge.
+              // Caregiver local device speaker remains strictly silent!
               setSheetState(() {
                 transcript.add({
-                  'sender': 'AI BOT',
+                  'sender': "AI BOT (On ${_activeProfile.name}'s Mobile)",
                   'text': prompt,
                   'color': '0xFFA5B4FC',
                 });
@@ -1595,8 +1620,8 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                 isRinging = false;
                 isConnected = true;
                 transcript.add({
-                  'sender': 'TELEPHONY',
-                  'text': '🟢 Call Answered by ${_activeProfile.name}! Connected to 8kHz AMR-NB audio bridge.',
+                  'sender': 'TELEPHONY BRIDGE',
+                  'text': '🟢 Call Answered by ${_activeProfile.name} on their phone (+91 $phone)! 8kHz AMR-NB speech stream active.',
                   'color': '0xFF10B981',
                 });
               });
@@ -1607,7 +1632,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                 }
               });
 
-              // AI Bot speaks ONLY now, after the call is answered!
+              // AI Bot speaks to parent on their phone now that call is answered
               Timer(const Duration(milliseconds: 600), () {
                 if (sheetCtx.mounted && isConnected) {
                   speakMedQuery(0);
@@ -1717,14 +1742,49 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                           ),
                         ],
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          _stopTts();
-                          callDurationTimer?.cancel();
-                          ringAutoAnswerTimer?.cancel();
-                          Navigator.pop(ctx);
-                        },
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              final curName = currentMedIdx < _medications.length
+                                  ? _medications[currentMedIdx]['name'] as String
+                                  : 'Prescribed Medicine';
+                              final prompt = _getBotSpokenPromptForMed(
+                                lang: _botCallLanguage,
+                                parentName: _activeProfile.name,
+                                medName: curName,
+                              );
+                              _speakText(prompt, lang: _botCallLanguage);
+                              _showToast('🔊 Playing sample voice preview on speaker');
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF38BDF8).withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: const Color(0xFF38BDF8).withValues(alpha: 0.4)),
+                              ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.volume_up, size: 14, color: Color(0xFF38BDF8)),
+                                  SizedBox(width: 4),
+                                  Text('Preview', style: TextStyle(fontSize: 10.5, color: Color(0xFF38BDF8), fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              _stopTts();
+                              callDurationTimer?.cancel();
+                              ringAutoAnswerTimer?.cancel();
+                              Navigator.pop(ctx);
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -1989,16 +2049,16 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                                             }
                                           });
 
-                                          // AI Bot speaks verbal acknowledgment
+                                          // AI Bot acknowledgment (delivered to parent's phone)
                                           final ack = _getDtmfAckPrompt(
                                             lang: _botCallLanguage,
                                             parentName: _activeProfile.name,
                                             medName: curName,
                                           );
-                                          _speakText(ack, lang: _botCallLanguage);
+                                          // Caregiver mobile speaker remains silent
                                           setSheetState(() {
                                             transcript.add({
-                                              'sender': 'AI BOT',
+                                              'sender': "AI BOT (On Parent's Mobile)",
                                               'text': ack,
                                               'color': '0xFFA5B4FC',
                                             });
@@ -2063,7 +2123,14 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                                             parentName: _activeProfile.name,
                                             medName: curName,
                                           );
-                                          _speakText(skipMsg, lang: _botCallLanguage);
+                                          // Caregiver mobile speaker remains silent
+                                          setSheetState(() {
+                                            transcript.add({
+                                              'sender': "AI BOT (On Parent's Mobile)",
+                                              'text': skipMsg,
+                                              'color': '0xFFF59E0B',
+                                            });
+                                          });
                                         },
                                         icon: const Icon(Icons.snooze, size: 18),
                                         label: const Text('Key 2: Skipped', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),

@@ -6262,11 +6262,14 @@ class SvaraPranaApp extends StatelessWidget {
             const b = document.createElement('div');
             b.className = 'conv-bubble conv-ai';
             b.style.cssText = 'background:rgba(79, 70, 229, 0.15); border:1px solid rgba(79, 70, 229, 0.3); border-radius:12px; padding:10px; margin-bottom:10px; font-size:0.86rem;';
-            b.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:#A5B4FC; text-transform:uppercase; margin-bottom:3px;">🤖 SvaraPrana AI Clinical Agent:</div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${prompt}"</div>`;
+            b.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span style="font-size:0.7rem; font-weight:700; color:#A5B4FC; text-transform:uppercase;">🤖 AI Bot (Speaking to Parent on +91 ${validNum}):</span>
+              <button type="button" style="background:rgba(56,189,248,0.2); border:1px solid #38BDF8; color:#38BDF8; border-radius:6px; font-size:0.68rem; padding:2px 7px; cursor:pointer;" onclick="speakText('${prompt.replace(/'/g, "\\'")}', '${lang}')">🔊 Preview Audio</button>
+            </div><div style="font-family:var(--font-indic); color:#F8FAFC;">"${prompt}"</div>`;
             convFlow.appendChild(b);
             convFlow.scrollTop = convFlow.scrollHeight;
           }
-          speakText(prompt, lang);
+          // Do not auto-speak on browser speaker; audio is delivered to parent's phone!
           if (lcdStatus) lcdStatus.textContent = '⏳ AWAITING KEY 1 DTMF OR VOICE "HAAN"...';
         }
 
@@ -6301,7 +6304,7 @@ class SvaraPranaApp extends StatelessWidget {
           // Ringing State: bot is SILENT
           if (ringingBanner) ringingBanner.style.display = 'block';
           if (dtmfPad) dtmfPad.style.display = 'none';
-          if (lcdStatus) lcdStatus.textContent = '📳 RINGING PARENT (+91 ' + validNum + ')... WAITING FOR ANSWER';
+          if (lcdStatus) lcdStatus.textContent = '📳 RINGING PARENT (+91 ' + validNum + ')... BOT SPEAKS TO PARENT WHEN PICKED UP';
           playTelephoneRing();
 
           if (btnSimulateAnswer) {
@@ -6330,13 +6333,13 @@ class SvaraPranaApp extends StatelessWidget {
                 convFlow.scrollTop = convFlow.scrollHeight;
               }
 
-              // Bot speaks verbal acknowledgement
+              // Bot verbal acknowledgement (delivered to parent's phone)
               const ack = (lang === 'kn')
                 ? `ಧನ್ಯವಾದಗಳು ${parentName} ಅವರೇ, ನಿಮ್ಮ ಮಾತ್ರೆ ತೆಗೆದುಕೊಂಡಿದ್ದು ದಾಖಲಾಗಿದೆ.`
                 : (lang === 'hi')
                 ? `धन्यवाद ${parentName} जी, आपकी दवाई की पुष्टि हो गई है।`
                 : `Thank you ${parentName}, your medication has been confirmed and logged.`;
-              speakText(ack, lang);
+              // Caregiver browser speaker remains silent
 
               if (currentCallSpaceIdx < routines.length - 1) {
                 currentCallSpaceIdx++;
@@ -6367,7 +6370,7 @@ class SvaraPranaApp extends StatelessWidget {
                 : (lang === 'hi')
                 ? `कृपया जल्द ही दवाई ले लें। रिमाइंडर भेज दिया गया है।`
                 : `Please take your dose soon. A reminder has been scheduled.`;
-              speakText(skipMsg, lang);
+              // Caregiver browser speaker remains silent
             };
           }
 
@@ -6466,6 +6469,8 @@ class SvaraPranaApp extends StatelessWidget {
       const btnChooseSonTalk = document.getElementById('btnChooseSonTalk');
       if (btnChooseSonTalk) {
         btnChooseSonTalk.addEventListener('click', () => {
+          const cleanPhone = getCleanParentPhone();
+          window.location.href = `tel:${cleanPhone}`;
           startActiveCallSession(false);
         });
       }

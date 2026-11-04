@@ -32,6 +32,21 @@ class MainActivity : FlutterActivity(), TextToSpeech.OnInitListener {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
+        try {
+            val permissionsToRequest = mutableListOf<String>()
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(android.Manifest.permission.CALL_PHONE)
+            }
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+            if (permissionsToRequest.isNotEmpty()) {
+                ActivityCompat.requestPermissions(this, permissionsToRequest.toTypedArray(), 100)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun onInit(status: Int) {
@@ -156,18 +171,33 @@ class MainActivity : FlutterActivity(), TextToSpeech.OnInitListener {
                     val cleanPhone = phone.replace(Regex("[^0-9+]"), "")
                     if (cleanPhone.isNotEmpty()) {
                         try {
+                            // Immediately stop local device TTS whenever a phone call is initiated
+                            try {
+                                textToSpeech?.stop()
+                                pendingSpeechText = null
+                            } catch (e: Exception) {}
+
                             val dialUri = Uri.parse("tel:$cleanPhone")
-                            val intent = Intent(Intent.ACTION_DIAL, dialUri).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            // If CALL_PHONE permission is granted, immediately place the cellular call directly!
+                            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                                val callIntent = Intent(Intent.ACTION_CALL, dialUri).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                startActivity(callIntent)
+                            } else {
+                                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CALL_PHONE), 102)
+                                val dialIntent = Intent(Intent.ACTION_DIAL, dialUri).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                startActivity(dialIntent)
                             }
-                            startActivity(intent)
                             result.success(true)
                         } catch (e: Exception) {
                             try {
-                                val viewIntent = Intent(Intent.ACTION_VIEW, Uri.parse("tel:$cleanPhone")).apply {
+                                val fallbackIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$cleanPhone")).apply {
                                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                 }
-                                startActivity(viewIntent)
+                                startActivity(fallbackIntent)
                                 result.success(true)
                             } catch (e2: Exception) {
                                 result.error("DIAL_ERROR", e2.message, null)
