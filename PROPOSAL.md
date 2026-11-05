@@ -70,7 +70,7 @@ The core failure of existing market solutions is an engineering disconnect: atte
 ---
 
 ### 1.3 The Human-Centered Persona Reality
-> **Shrimati Saraswati (74, Madurai)** lives alone with mild hypertension and osteoarthritis. Her daughter **Ananya (34, Bengaluru)** calls three times a week. When Ananya asks *"Amma, are you taking your tablets?"*, Saraswati invariably replies *"Romba nalla irukken ma"* (I am completely fine), concealing her worsening dizziness and knee pain to protect Ananya from worrying at work. 
+> **Shrimati Saraswati (74, Madurai)** lives alone with mild hypertension and osteoarthritis. Her caregiver **Sai (34, Bengaluru)** calls three times a week. When Sai asks *"Amma, are you taking your tablets?"*, Saraswati invariably replies *"Romba nalla irukken ma"* (I am completely fine), concealing her worsening dizziness and knee pain to protect Sai from worrying at work. 
 > 
 > Saraswati will **never install an app, charge a smartwatch, or allow a camera in her home**. **She only answers her basic ₹900 Nokia feature phone.**
 

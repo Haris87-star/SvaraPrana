@@ -247,8 +247,8 @@ class TelecomSimulator {
       },
       {
         speaker: 'Svara Saarthi (Warm Closing)',
-        textEn: 'Have a blessed day Amma! We will chat with Ananya in the evening.',
-        textIndic: 'அருமை அம்மா! சாயங்காலம் அனன்யா பேசும்போது சொல்றேன். நல்லா இருங்க!',
+        textEn: 'Have a blessed day Amma! We will chat with Sai in the evening.',
+        textIndic: 'அருமை அம்மா! சாயங்காலம் சாய் பேசும்போது சொல்றேன். நல்லா இருங்க!',
         sender: 'companion',
         delay: 13000
       }

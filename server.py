@@ -437,7 +437,7 @@ def get_current_vitals():
             "tablets_remaining": 24,
             "cadence_status": "SYNCHRONIZED"
         },
-        "caregiver_link": "Ananya (Daughter in Bengaluru)",
+        "caregiver_link": "Sai (Family in Bengaluru)",
         "active_safety_tier": "Tier 0 (Optimal)"
     }
 

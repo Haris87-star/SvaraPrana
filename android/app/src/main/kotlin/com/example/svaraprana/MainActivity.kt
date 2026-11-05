@@ -19,6 +19,23 @@ import java.util.HashMap
 import java.util.Locale
 
 class MainActivity : FlutterActivity(), TextToSpeech.OnInitListener {
+    private var pendingPhoneToCall: String? = null
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 102 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            val phone = pendingPhoneToCall
+            pendingPhoneToCall = null
+            if (phone != null && phone.isNotEmpty()) {
+                try {
+                    val callIntent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$phone")).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    startActivity(callIntent)
+                } catch (e: Exception) {}
+            }
+        }
+    }
     private val CHANNEL = "com.svaraprana.app/native"
     private var textToSpeech: TextToSpeech? = null
     private var isTtsInitialized = false
@@ -185,6 +202,7 @@ class MainActivity : FlutterActivity(), TextToSpeech.OnInitListener {
                                 }
                                 startActivity(callIntent)
                             } else {
+                                pendingPhoneToCall = cleanPhone
                                 ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CALL_PHONE), 102)
                                 val dialIntent = Intent(Intent.ACTION_DIAL, dialUri).apply {
                                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -359,9 +377,9 @@ class MainActivity : FlutterActivity(), TextToSpeech.OnInitListener {
                 }
                 "playAlarmChime" -> {
                     try {
-                        val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-                            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                        val ringtone = RingtoneManager.getRingtone(applicationContext, alarmUri)
+                        // Gentle subtle notification chime only (Never blast loud wake-up alarm on caregiver phone)
+                        val notifUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                        val ringtone = RingtoneManager.getRingtone(applicationContext, notifUri)
                         ringtone?.play()
                         android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
                             try {
@@ -369,7 +387,7 @@ class MainActivity : FlutterActivity(), TextToSpeech.OnInitListener {
                                     ringtone.stop()
                                 }
                             } catch (e: Exception) {}
-                        }, 5000)
+                        }, 800)
                         result.success(true)
                     } catch (e: Exception) {
                         result.error("CHIME_ERROR", e.message, null)

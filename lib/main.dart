@@ -288,11 +288,11 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
       'color': '0xFF4F46E5',
     },
     {
-      'name': 'Ananya Hari',
-      'role': 'Daughter (Secondary Caregiver)',
+      'name': 'Sai',
+      'role': 'Secondary Caregiver',
       'location': 'Mumbai',
       'phone': '+91 98200 67890',
-      'avatar': 'A',
+      'avatar': 'S',
       'color': '0xFF10B981',
     },
     {
@@ -1539,6 +1539,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
               onTap: () {
                 Navigator.pop(ctx);
                 _stopTts();
+                _dialPhoneNumber(phone);
                 _showLiveCallInspectionSheet(isBotMode: true, phone: phone);
               },
               child: Container(
@@ -1651,8 +1652,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                 'color': '0xFF38BDF8',
               });
 
-              // Simulate authentic ring tone chime
-              _playAlarmChime(title: 'Ringing Parent');
+              // Caregiver device is strictly silent (Ring tone is heard on parent's phone)
 
               // Realistic auto-connect after 3.8s if parent does not click manual answer
               ringAutoAnswerTimer = Timer(const Duration(milliseconds: 3800), () {
@@ -1917,7 +1917,6 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                             onTap: () {
                               setSheetState(() => med['taken'] = !isTaken);
                               setState(() => med['taken'] = !isTaken);
-                              _playAlarmChime();
                             },
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
@@ -2028,7 +2027,6 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                         ),
                                         onPressed: () {
-                                          _playAlarmChime();
                                           final curName = currentMedIdx < _medications.length
                                               ? _medications[currentMedIdx]['name'] as String
                                               : 'Prescribed Medicine';
@@ -2097,7 +2095,6 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                         ),
                                         onPressed: () {
-                                          _playAlarmChime();
                                           final curName = currentMedIdx < _medications.length
                                               ? _medications[currentMedIdx]['name'] as String
                                               : 'Medicine';
@@ -2149,7 +2146,6 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                     ),
                                     onPressed: () {
-                                      _playAlarmChime();
                                       final curName = currentMedIdx < _medications.length
                                           ? _medications[currentMedIdx]['name'] as String
                                           : 'Prescribed Medicine';
@@ -3945,7 +3941,7 @@ class _MainShellScreenState extends State<MainShellScreen> with SingleTickerProv
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
-                          onPressed: () => _triggerCallFlow(_activeProfile.phoneNumber),
+                          onPressed: () => _dialPhoneNumber(_activeProfile.phoneNumber),
                           icon: const Icon(Icons.phone, size: 16),
                           label: const Text('Call Parent Now', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                         ),
@@ -4126,7 +4122,7 @@ Age / Sex  : 68 Yrs / Female
 Location   : Indiranagar, Bengaluru, Karnataka
 UHID       : SP-KA-2026-8834
 Device     : Nokia 105 • 2G GSM Keypad (+91 98450 12345)
-Caregiver  : Ananya Hari (Daughter, +91 98401 23456)
+Caregiver  : Sai (Secondary Caregiver, +91 98401 23456)
 Physician  : Dr. Arvind Swaminathan, MD, DM (Geriatric Cardiology), Apollo Hospital
 Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
 ================================================================================
@@ -4329,7 +4325,7 @@ Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
-                  onPressed: () => _triggerCallFlow(_activeProfile.phoneNumber),
+                  onPressed: () => _dialPhoneNumber(_activeProfile.phoneNumber),
                   icon: const Icon(Icons.call, size: 16),
                   label: const Text('Dial Now', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                 ),

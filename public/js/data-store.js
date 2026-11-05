@@ -13,7 +13,7 @@ const DATA_STORE = {
       age: 74,
       location: 'Madurai, Tamil Nadu',
       phone: 'Nokia 105 (₹900 GSM Feature Phone)',
-      caregiver: 'Ananya (Daughter in Bengaluru)',
+      caregiver: 'Sai (Family in Bengaluru)',
       medication: 'Telmisartan 40mg (Morning BP)',
       chemist: 'Apollo Pharmacy, Madurai Town Branch',
       vitalityScore: 88.5,

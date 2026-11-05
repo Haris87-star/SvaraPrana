@@ -2832,7 +2832,7 @@
                 <span data-i18n="sosBoxTitle">Tier-3 Emergency SOS &amp; Medical Beacon Drill</span>
               </h3>
               <p data-i18n="sosBoxDesc">
-                Simulates real-time multi-party emergency conference bridging: 108 Ambulance dispatch, Dr. Arvind, local neighbor Suresh, and daughter Ananya with live GPS triangulation.
+                Simulates real-time multi-party emergency conference bridging: 108 Ambulance dispatch, Dr. Arvind, local neighbor Suresh, and Sai with live GPS triangulation.
               </p>
             </div>
             <button class="btn-emergency-drill" id="btnTriggerSOSDrill">
@@ -2869,7 +2869,7 @@
                   <span class="step-badge t2" data-i18n="tier2Badge">Tier 2 • Primary Family Bridge</span>
                   <h4 style="font-size:1.05rem; font-weight:700; margin:10px 0 6px 0;" data-i18n="tier2Title">Automated Family IVR Bridge</h4>
                   <p style="font-size:0.8rem; color:var(--text-secondary); line-height:1.4;" data-i18n="tier2Desc">
-                    Dials daughter Ananya and son Harish simultaneously with clear synthesized voice summary &amp; one-tap connection to elder's handset.
+                    Dials family caregiver Sai and son Harish simultaneously with clear synthesized voice summary &amp; one-tap connection to elder's handset.
                   </p>
                 </div>
                 <button class="btn btn-secondary" id="btnTestTier2" style="font-size:0.8rem;">
@@ -2940,22 +2940,22 @@
 
               <div class="contact-card" id="careCard1">
                 <div class="contact-top">
-                  <div class="contact-avatar" style="background:#064E3B; color:#34D399;">A</div>
+                  <div class="contact-avatar" style="background:#064E3B; color:#34D399;">S</div>
                   <div style="flex:1;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                      <h4 id="careName1" style="font-size:0.95rem; font-weight:700; margin:0;">Ananya Hari</h4>
+                      <h4 id="careName1" style="font-size:0.95rem; font-weight:700; margin:0;">Sai</h4>
                       <button type="button" class="btn-edit-caretaker" data-index="1" style="background:none; border:none; color:#38BDF8; font-size:0.75rem; cursor:pointer; font-weight:700;">✏️ Edit</button>
                     </div>
-                    <span id="careRole1" style="font-size:0.78rem; color:var(--text-secondary);"><span data-i18n="contactDaughter">Daughter • Mumbai</span></span>
+                    <span id="careRole1" style="font-size:0.78rem; color:var(--text-secondary);"><span data-i18n="contactDaughter">Secondary Caregiver • Mumbai</span></span>
                     <div id="carePhone1" style="font-size:0.76rem; color:#A7F3D0; font-family:var(--font-mono); margin-top:2px;">+91 98201 33445</div>
                   </div>
                 </div>
                 <div class="contact-actions" style="margin-top:8px;">
-                  <button class="btn btn-secondary btn-simulate-call" data-contact="Ananya (Daughter)" data-phone="9820133445" style="flex:1; font-size:0.76rem; padding:6px;">
+                  <button class="btn btn-secondary btn-simulate-call" data-contact="Sai" data-phone="9820133445" style="flex:1; font-size:0.76rem; padding:6px;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                     <span>📞 Call</span>
                   </button>
-                  <button class="btn btn-secondary btn-assign-task" data-contact="Ananya (Daughter)" style="flex:1; font-size:0.76rem; padding:6px;">
+                  <button class="btn btn-secondary btn-assign-task" data-contact="Sai" style="flex:1; font-size:0.76rem; padding:6px;">
                     <span>🤝 Assign</span>
                   </button>
                   <button class="btn btn-secondary btn-edit-contact" data-index="1" style="font-size:0.76rem; padding:6px 10px; color:#F59E0B; border-color:rgba(245,158,11,0.4);">
@@ -3071,7 +3071,7 @@
         <div class="form-group" style="margin-bottom:14px;">
           <label class="form-label" for="selectDelegateCaretaker">Select Caretaker to Assign:</label>
           <select id="selectDelegateCaretaker" class="form-select" style="width:100%; background:var(--bg-canvas); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:10px; color:var(--text-primary);">
-            <option value="ananya" data-phone="9820133445" data-name="Ananya Hari (Daughter)">Ananya Hari (Daughter • Mumbai) — +91 98201 33445</option>
+            <option value="sai" data-phone="9820133445" data-name="Sai (Secondary Caregiver)">Sai (Secondary Caregiver • Mumbai) — +91 98201 33445</option>
             <option value="suresh" data-phone="9741244556" data-name="Suresh Kumar (Neighbor)">Suresh Kumar (Neighbor • Indiranagar) — +91 97412 44556</option>
             <option value="doctor" data-phone="9845122334" data-name="Dr. Arvind Swaminathan">Dr. Arvind Swaminathan (Geriatrician) — +91 98451 22334</option>
           </select>
@@ -4243,7 +4243,7 @@ class SvaraPranaApp extends StatelessWidget {
     "presetAppa": "Appa (+91 98200 67890)",
     "presetDadi": "Dadi (+91 97410 54321)",
     "sosBoxTitle": "Tier-3 Emergency SOS & Medical Beacon Drill",
-    "sosBoxDesc": "Simulates real-time multi-party emergency conference bridging: 108 Ambulance dispatch, Dr. Arvind, local neighbor Suresh, and daughter Ananya with live GPS triangulation.",
+    "sosBoxDesc": "Simulates real-time multi-party emergency conference bridging: 108 Ambulance dispatch, Dr. Arvind, local neighbor Suresh, and Sai with live GPS triangulation.",
     "btnTriggerSOS": "TRIGGER TIER-3 EMERGENCY SOS DRILL",
     "pipelineTitle": "Automated 3-Tier Escalation Protocol",
     "tier1Badge": "Tier 1 • Grace Window (45 Mins)",
@@ -4252,7 +4252,7 @@ class SvaraPranaApp extends StatelessWidget {
     "btnTestTier1": "Simulate Tier 1 Delay Check",
     "tier2Badge": "Tier 2 • Primary Family Bridge",
     "tier2Title": "Automated Family IVR Bridge",
-    "tier2Desc": "Dials daughter Ananya and son Harish simultaneously with clear synthesized voice summary & one-tap connection to elder's handset.",
+    "tier2Desc": "Dials family caregiver Sai and son Harish simultaneously with clear synthesized voice summary & one-tap connection to elder's handset.",
     "btnTestTier2": "Simulate Tier 2 Family Bridge",
     "tier3Badge": "Tier 3 • Acute Trauma / 108 Dispatch",
     "tier3Title": "Neighbor & 108 Ambulance SOS",
@@ -5431,38 +5431,9 @@ class SvaraPranaApp extends StatelessWidget {
       }
 
       function playTelephoneRing() {
-        const ctx = getAudioContext();
-        if (!ctx) return;
-        try {
-          const now = ctx.currentTime;
-          const osc1 = ctx.createOscillator();
-          const osc2 = ctx.createOscillator();
-          const gain = ctx.createGain();
-
-          osc1.frequency.setValueAtTime(440, now);
-          osc2.frequency.setValueAtTime(480, now);
-
-          gain.gain.setValueAtTime(0, now);
-          gain.gain.linearRampToValueAtTime(0.18, now + 0.05);
-          gain.gain.setValueAtTime(0.18, now + 0.8);
-          gain.gain.linearRampToValueAtTime(0, now + 0.85);
-
-          gain.gain.setValueAtTime(0, now + 1.1);
-          gain.gain.linearRampToValueAtTime(0.18, now + 1.15);
-          gain.gain.setValueAtTime(0.18, now + 1.95);
-          gain.gain.linearRampToValueAtTime(0, now + 2.0);
-
-          osc1.connect(gain);
-          osc2.connect(gain);
-          gain.connect(ctx.destination);
-
-          osc1.start(now);
-          osc2.start(now);
-          osc1.stop(now + 2.1);
-          osc2.stop(now + 2.1);
-        } catch (e) {
-          console.warn('Audio ring error:', e);
-        }
+        // Silenced: Caller device should NEVER play telephone ring tones or alarm sounds
+        // out of its own speakers. The ring tone is heard by the elder on their handset over cellular.
+        return;
       }
 
       function playDtmfTone() {
@@ -6478,6 +6449,8 @@ class SvaraPranaApp extends StatelessWidget {
       const btnChooseBotInspect = document.getElementById('btnChooseBotInspect');
       if (btnChooseBotInspect) {
         btnChooseBotInspect.addEventListener('click', () => {
+          const cleanPhone = getCleanParentPhone();
+          window.location.href = `tel:${cleanPhone}`;
           startActiveCallSession(true);
         });
       }
@@ -6552,10 +6525,9 @@ class SvaraPranaApp extends StatelessWidget {
               convFlow.appendChild(aiBubble);
             }
 
-            speakText(promptToSpeak, lang, () => {
-              if (lcdStatus) lcdStatus.textContent = 'AWAITING DTMF KEYPRESS 1...';
-
-              setTimeout(() => {
+            // Browser speaker is silent (Audio is delivered to parent's phone)
+            if (lcdStatus) lcdStatus.textContent = 'AWAITING DTMF KEYPRESS 1 ON PARENT HANDSET...';
+            setTimeout(() => {
                 playDtmfTone();
 
                 if (convFlow) {
@@ -6620,7 +6592,6 @@ class SvaraPranaApp extends StatelessWidget {
                   });
                 });
               }, 1200);
-            });
           }, 2500);
       }
 
@@ -6776,8 +6747,9 @@ class SvaraPranaApp extends StatelessWidget {
 
       if (btnInitiateParentCall) {
         btnInitiateParentCall.addEventListener('click', (e) => {
-          e.preventDefault();
-          triggerCallInspectionFlow();
+          const cleanPhone = getCleanParentPhone();
+          window.location.href = `tel:${cleanPhone}`;
+          showToast(`📞 Placing cellular call to +91 ${cleanPhone.slice(-10)}...`, 'emerald');
         });
       }
 
@@ -6800,8 +6772,9 @@ class SvaraPranaApp extends StatelessWidget {
 
       if (btnDirectTelCall) {
         btnDirectTelCall.addEventListener('click', (e) => {
-          e.preventDefault();
-          triggerCallInspectionFlow();
+          const cleanPhone = getCleanParentPhone();
+          window.location.href = `tel:${cleanPhone}`;
+          showToast(`📞 Dialing +91 ${cleanPhone.slice(-10)}...`, 'emerald');
         });
       }
 
@@ -7636,7 +7609,7 @@ class SvaraPranaApp extends StatelessWidget {
     <div><strong>Age / Gender</strong> ${parentAge} Yrs • Female</div>
     <div><strong>Patient UHID</strong> SP-KA-2026-8834</div>
     <div><strong>Telephone / Device</strong> ${parentDevice} (${parentPhone})</div>
-    <div><strong>Primary Caregiver</strong> Ananya Hari (Daughter, +91 98401 23456)</div>
+    <div><strong>Primary Caregiver</strong> Sai (Secondary Caregiver, +91 98401 23456)</div>
     <div><strong>Attending Physician</strong> Dr. Arvind Swaminathan, MD, DM (Geriatric Cardiology)</div>
   </div>
 
@@ -7821,7 +7794,7 @@ Age / Sex  : ${parentAge} Yrs / Female
 Location   : ${parentCity}, Karnataka, India
 UHID       : SP-KA-2026-8834
 Device     : ${parentDevice} (${parentPhone})
-Caregiver  : Ananya Hari (Daughter, +91 98401 23456)
+Caregiver  : Sai (Secondary Caregiver, +91 98401 23456)
 Physician  : Dr. Arvind Swaminathan, MD, DM (Geriatric Cardiology), Apollo Hospital
 Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
 ================================================================================
@@ -7928,8 +7901,8 @@ Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
       const btnTestTier2 = document.getElementById('btnTestTier2');
       if (btnTestTier2) {
         btnTestTier2.addEventListener('click', () => {
-          showToast('Tier 2 Family Bridge: WhatsApp Digest sent to Care Circle (Ananya Hari).', 'indigo');
-          addNotification('Tier 2 Escalation: WhatsApp notification sent to Ananya Hari (+91 98401 23456). Family bridge ready.', 'indigo');
+          showToast('Tier 2 Family Bridge: WhatsApp Digest sent to Care Circle (Sai).', 'indigo');
+          addNotification('Tier 2 Escalation: WhatsApp notification sent to Sai (+91 98401 23456). Family bridge ready.', 'indigo');
         });
       }
 
@@ -8780,7 +8753,7 @@ Compliance : Digital Personal Data Protection (DPDP) Act 2023 Certified
       let activeEditingCaretakerIdx = 0;
       const defaultCaretakers = [
         { name: 'Harish Hari', role: 'Son (Primary) • Bengaluru', phone: '9845012345', priority: 'Primary (Immediate SOS)', avatar: 'H', bg: '#1E1B4B', color: '#818CF8' },
-        { name: 'Ananya Hari', role: 'Daughter • Mumbai', phone: '9820133445', priority: 'Secondary Caregiver', avatar: 'A', bg: '#064E3B', color: '#34D399' },
+        { name: 'Sai', role: 'Secondary Caregiver • Mumbai', phone: '9820133445', priority: 'Secondary Caregiver', avatar: 'S', bg: '#064E3B', color: '#34D399' },
         { name: 'Suresh Kumar', role: 'Neighbor Flat 204 • Has Spare Key', phone: '9741244556', priority: 'Local Neighbor / Spare Key', avatar: 'S', bg: '#78350F', color: '#FBBF24' },
         { name: 'Dr. Arvind Swaminathan', role: 'Geriatrician • Manipal Hospital', phone: '9845122334', priority: 'Emergency Doctor', avatar: 'D', bg: '#164E63', color: '#22D3EE' }
       ];

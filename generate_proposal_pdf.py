@@ -447,8 +447,8 @@ def build_page_1(styles):
     # Real-World Persona & Cultural Context
     persona_intro = (
         "<b>Human-Centered Persona Context:</b> Consider <i>Shrimati Saraswati (74, Madurai)</i>, living alone with mild hypertension and osteoarthritis. "
-        "Her daughter <i>Ananya (34, Bengaluru)</i> calls three times a week. When Ananya asks <i>'Amma, are you taking your tablets?'</i>, Saraswati "
-        "invariably says <i>'Romba nalla irukken ma'</i> (I am completely fine), hiding her worsening knee pain and dizziness so Ananya doesn't worry at work. "
+        "Her caregiver <i>Sai (34, Bengaluru)</i> calls three times a week. When Sai asks <i>'Amma, are you taking your tablets?'</i>, Saraswati "
+        "invariably says <i>'Romba nalla irukken ma'</i> (I am completely fine), hiding her worsening knee pain and dizziness so Sai doesn't worry at work. "
         "Saraswati will never install an app, charge a smartwatch, or allow a camera in her pooja room. <b>She only answers her basic Nokia feature phone.</b>"
     )
     story.append(Paragraph(persona_intro, styles["BodyTextCustomJustify"]))

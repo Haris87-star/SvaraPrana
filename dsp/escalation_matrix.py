@@ -68,7 +68,7 @@ def generate_whatsapp_caregiver_digest(
     vitality_score: float,
     acoustic_summary: dict,
     routine_confirmed: bool = True,
-    caregiver_name: str = "Ananya",
+    caregiver_name: str = "Sai",
     location: str = "Madurai"
 ) -> dict:
     """
@@ -133,7 +133,7 @@ def dispatch_emergency_protocols(elder_name: str, contact_details: dict) -> dict
         {
             "channel": "VOICE_CALL_TRUNK",
             "recipient": contact_details.get("primary_child_phone", "+91 98401 23456"),
-            "target": f"Adult Child ({contact_details.get('primary_child_name', 'Ananya')})",
+            "target": f"Family Member ({contact_details.get('primary_child_name', 'Sai')})",
             "status": "CONNECTING_HIGH_PRIORITY_BRIDGE",
             "latency_ms": 420
         },
